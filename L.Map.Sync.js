@@ -32,7 +32,6 @@ L.Map = L.Map.extend({
             this._syncMap.setView(this.getCenter(), this.getZoom(), false, true);
         }, this);
 
-
         this.dragging._draggable._updatePosition = function () {
             L.Draggable.prototype._updatePosition.call(this);
             L.DomUtil.setPosition(map.dragging._draggable._element, this._newPos);
