@@ -5,35 +5,31 @@
 L.Map = L.Map.extend({
     sync: function (map) {
 
-        var inject = function (map) {
-            return L.extend(map, {
-                setView: function (center, zoom, forceReset, sync) {
-                    if (!sync) {
-                        this._syncMap.setView(center, zoom, forceReset, true);
-                    }
-                    return L.Map.prototype.setView.call(this, center, zoom, forceReset);
-                },
-
-                panBy: function (offset, duration, easeLinearity, sync) {
-                    if (!sync) {
-                        this._syncMap.panBy(offset, duration, easeLinearity, true);
-                    }
-                    return L.Map.prototype.panBy.call(this, offset, duration, easeLinearity);
-                },
-
-                _onResize: function (evt, sync) {
-                    if (!sync) {
-                        this._syncMap._onResize(evt, true);
-                    }
-                    return L.Map.prototype._onResize.call(this, evt);
+        this._syncMap = L.extend(map, {
+            setView: function (center, zoom, forceReset, sync) {
+                if (!sync) {
+                    this._syncMap.setView(center, zoom, forceReset, true);
                 }
-            });
-        };
+                return L.Map.prototype.setView.call(this, center, zoom, forceReset);
+            },
 
-        this._syncMap = inject(map);
+            panBy: function (offset, duration, easeLinearity, sync) {
+                if (!sync) {
+                    this._syncMap.panBy(offset, duration, easeLinearity, true);
+                }
+                return L.Map.prototype.panBy.call(this, offset, duration, easeLinearity);
+            },
+
+            _onResize: function (evt, sync) {
+                if (!sync) {
+                    this._syncMap._onResize(evt, true);
+                }
+                return L.Map.prototype._onResize.call(this, evt);
+            }
+        });
 
         this.on('zoomend', function() {
-            this._syncMap.setView(this.getCenter(), this.getZoom(), false, true);            
+            this._syncMap.setView(this.getCenter(), this.getZoom(), false, true);
         }, this);
 
 
