@@ -4,39 +4,53 @@
 
 L.Map = L.Map.extend({
     sync: function (map) {
+        this._syncMaps = this._syncMaps || [];
 
-        this._syncMap = L.extend(map, {
+        this._syncMaps.push(L.extend(map, {
             setView: function (center, zoom, forceReset, sync) {
                 if (!sync) {
-                    this._syncMap.setView(center, zoom, forceReset, true);
+                    this._syncMaps.forEach(function (toSync) {
+                        toSync.setView(center, zoom, forceReset, true);
+                    });
                 }
                 return L.Map.prototype.setView.call(this, center, zoom, forceReset);
             },
 
             panBy: function (offset, duration, easeLinearity, sync) {
                 if (!sync) {
-                    this._syncMap.panBy(offset, duration, easeLinearity, true);
+                    this._syncMaps.forEach(function (toSync) {
+                        toSync.panBy(offset, duration, easeLinearity, true);
+                    });
                 }
                 return L.Map.prototype.panBy.call(this, offset, duration, easeLinearity);
             },
 
             _onResize: function (evt, sync) {
                 if (!sync) {
-                    this._syncMap._onResize(evt, true);
+                    this._syncMaps.forEach(function (toSync) {
+                        toSync._onResize(evt, true);
+                    });
                 }
                 return L.Map.prototype._onResize.call(this, evt);
             }
-        });
+        }));
 
+
+        var self = this;
         this.on('zoomend', function() {
-            this._syncMap.setView(this.getCenter(), this.getZoom(), false, true);
+            this._syncMaps.forEach(function (toSync) {
+                toSync.setView(self.getCenter(), self.getZoom(), false, true);
+            });
         }, this);
 
 
         this.dragging._draggable._updatePosition = function () {
             L.Draggable.prototype._updatePosition.call(this);
-            L.DomUtil.setPosition(map.dragging._draggable._element, this._newPos);
-            map.invalidateSize();
+            var that = this;
+            self._syncMaps.forEach(function (toSync) {
+                L.DomUtil.setPosition(toSync.dragging._draggable._element, that._newPos);
+                toSync.invalidateSize();
+            });
         };
 
         return this;
