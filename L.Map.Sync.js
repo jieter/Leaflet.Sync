@@ -7,22 +7,22 @@ L.Map = L.Map.extend({
         this._syncMaps = this._syncMaps || [];
 
         this._syncMaps.push(L.extend(map, {
-            setView: function (center, zoom, forceReset, sync) {
+            setView: function (center, zoom, options, sync) {
                 if (!sync) {
                     this._syncMaps.forEach(function (toSync) {
-                        toSync.setView(center, zoom, forceReset, true);
+                        toSync.setView(center, zoom, options, true);
                     });
                 }
-                return L.Map.prototype.setView.call(this, center, zoom, forceReset);
+                return L.Map.prototype.setView.call(this, center, zoom, options);
             },
 
-            panBy: function (offset, duration, easeLinearity, sync) {
+            panBy: function (offset, options, sync) {
                 if (!sync) {
                     this._syncMaps.forEach(function (toSync) {
-                        toSync.panBy(offset, duration, easeLinearity, true);
+                        toSync.panBy(offset, options, true);
                     });
                 }
-                return L.Map.prototype.panBy.call(this, offset, duration, easeLinearity);
+                return L.Map.prototype.panBy.call(this, offset, options);
             },
 
             _onResize: function (evt, sync) {
@@ -33,13 +33,13 @@ L.Map = L.Map.extend({
                 }
                 return L.Map.prototype._onResize.call(this, evt);
             }
-        }));
+        });
 
 
         var self = this;
         this.on('zoomend', function() {
             this._syncMaps.forEach(function (toSync) {
-                toSync.setView(self.getCenter(), self.getZoom(), false, true);
+                toSync.setView(self.getCenter(), self.getZoom(), {reset: false}, true);
             });
         }, this);
 
@@ -49,7 +49,7 @@ L.Map = L.Map.extend({
             var that = this;
             self._syncMaps.forEach(function (toSync) {
                 L.DomUtil.setPosition(toSync.dragging._draggable._element, that._newPos);
-                toSync.invalidateSize();
+                toSync.fire('move');
             });
         };
 
