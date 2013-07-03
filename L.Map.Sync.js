@@ -6,18 +6,18 @@ L.Map = L.Map.extend({
     sync: function (map) {
 
         this._syncMap = L.extend(map, {
-            setView: function (center, zoom, forceReset, sync) {
+            setView: function (center, zoom, options, sync) {
                 if (!sync) {
-                    this._syncMap.setView(center, zoom, forceReset, true);
+                    this._syncMap.setView(center, zoom, options, true);
                 }
-                return L.Map.prototype.setView.call(this, center, zoom, forceReset);
+                return L.Map.prototype.setView.call(this, center, zoom, options);
             },
 
-            panBy: function (offset, duration, easeLinearity, sync) {
+            panBy: function (offset, options, sync) {
                 if (!sync) {
-                    this._syncMap.panBy(offset, duration, easeLinearity, true);
+                    this._syncMap.panBy(offset, options, true);
                 }
-                return L.Map.prototype.panBy.call(this, offset, duration, easeLinearity);
+                return L.Map.prototype.panBy.call(this, offset, options);
             },
 
             _onResize: function (evt, sync) {
@@ -29,13 +29,13 @@ L.Map = L.Map.extend({
         });
 
         this.on('zoomend', function() {
-            this._syncMap.setView(this.getCenter(), this.getZoom(), false, true);
+            this._syncMap.setView(this.getCenter(), this.getZoom(), {reset: false}, true);
         }, this);
 
         this.dragging._draggable._updatePosition = function () {
             L.Draggable.prototype._updatePosition.call(this);
             L.DomUtil.setPosition(map.dragging._draggable._element, this._newPos);
-            map.invalidateSize();
+            map.fire('move');
         };
 
         return this;
