@@ -1,9 +1,10 @@
 /*
- * Extends L.Map to synchronize two maps
+ * Extends L.Map to synchronize the interaction on one map to one or more other maps.
  */
 
 L.Map = L.Map.extend({
     sync: function (map) {
+        var originalMap = this;
         this._syncMaps = this._syncMaps || [];
 
         this._syncMaps.push(L.extend(map, {
@@ -33,27 +34,25 @@ L.Map = L.Map.extend({
                 }
                 return L.Map.prototype._onResize.call(this, evt);
             }
-        });
+        }));
 
-
-        var self = this;
-        this.on('zoomend', function() {
-            this._syncMaps.forEach(function (toSync) {
-                toSync.setView(self.getCenter(), self.getZoom(), {reset: false}, true);
+        originalMap.on('zoomend', function() {
+            originalMap._syncMaps.forEach(function (toSync) {
+                toSync.setView(originalMap.getCenter(), originalMap.getZoom(), {reset: false}, true);
             });
         }, this);
 
 
-        this.dragging._draggable._updatePosition = function () {
+        originalMap.dragging._draggable._updatePosition = function () {
             L.Draggable.prototype._updatePosition.call(this);
-            var that = this;
-            self._syncMaps.forEach(function (toSync) {
-                L.DomUtil.setPosition(toSync.dragging._draggable._element, that._newPos);
+            var self = this;
+            originalMap._syncMaps.forEach(function (toSync) {
+                L.DomUtil.setPosition(toSync.dragging._draggable._element, self._newPos);
                 toSync.fire('move');
             });
         };
 
-        return this;
+        return originalMap;
     }
 });
 
