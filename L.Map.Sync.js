@@ -10,7 +10,7 @@ L.Map = L.Map.extend({
         this._syncMaps.push(L.extend(map, {
             setView: function (center, zoom, options, sync) {
                 if (!sync) {
-                    this._syncMaps.forEach(function (toSync) {
+                    originalMap._syncMaps.forEach(function (toSync) {
                         toSync.setView(center, zoom, options, true);
                     });
                 }
@@ -19,7 +19,7 @@ L.Map = L.Map.extend({
 
             panBy: function (offset, options, sync) {
                 if (!sync) {
-                    this._syncMaps.forEach(function (toSync) {
+                    originalMap._syncMaps.forEach(function (toSync) {
                         toSync.panBy(offset, options, true);
                     });
                 }
@@ -28,7 +28,7 @@ L.Map = L.Map.extend({
 
             _onResize: function (evt, sync) {
                 if (!sync) {
-                    this._syncMaps.forEach(function (toSync) {
+                    originalMap._syncMaps.forEach(function (toSync) {
                         toSync._onResize(evt, true);
                     });
                 }
