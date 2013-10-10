@@ -52,17 +52,9 @@
                 var self = this;
                 originalMap._syncMaps.forEach(function (toSync) {
                     L.DomUtil.setPosition(toSync.dragging._draggable._element, self._newPos);
-                    toSync.fire('move');
+                    toSync.fire('moveend');
                 });
             };
-
-            if (!originalMap.hasEventListeners('moveend')) {
-                originalMap.on('moveend', function () {
-                    originalMap._syncMaps.forEach(function (toSync) {
-                        toSync.fire('moveend');
-                    });
-                });
-            }
 
             return originalMap;
         }
