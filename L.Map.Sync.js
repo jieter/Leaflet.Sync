@@ -47,7 +47,6 @@
                 }, this);
             }
 
-
             originalMap.dragging._draggable._updatePosition = function () {
                 L.Draggable.prototype._updatePosition.call(this);
                 var self = this;
@@ -56,6 +55,14 @@
                     toSync.fire('move');
                 });
             };
+
+            if (!originalMap.hasEventListeners('moveend')) {
+                originalMap.on('moveend', function () {
+                    originalMap._syncMaps.forEach(function (toSync) {
+                        toSync.fire('moveend');
+                    });
+                });
+            }
 
             return originalMap;
         }
