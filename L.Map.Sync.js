@@ -39,7 +39,9 @@
                 }
             }));
 
-            if (!originalMap.hasEventListeners('zoomend')) {
+            if (!originalMap._syncZoomendAttached) {
+                originalMap._syncZoomendAttached = true;
+
                 originalMap.on('zoomend', function () {
                     originalMap._syncMaps.forEach(function (toSync) {
                         toSync.setView(originalMap.getCenter(), originalMap.getZoom(), {reset: false}, true);
