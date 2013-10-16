@@ -53,10 +53,12 @@
                     return L.Map.prototype.panBy.call(this, offset, options);
                 },
 
-                _onResize: function (event) {
-                    originalMap._syncMaps.forEach(function (toSync) {
-                        toSync._onResize(event);
-                    });
+                _onResize: function (event, sync) {
+                    if (!sync) {
+                        originalMap._syncMaps.forEach(function (toSync) {
+                            toSync._onResize(event, true);
+                        });
+                    }
                     return L.Map.prototype._onResize.call(this, event);
                 }
             });
