@@ -7,10 +7,33 @@
 
     L.Map = L.Map.extend({
         sync: function (map) {
-            var originalMap = this;
-            this._syncMaps = this._syncMaps || [];
+            this._initSync();
 
-            this._syncMaps.push(L.extend(map, {
+            // prevent double-syncing the map:
+            var present = false;
+            this._syncMaps.forEach(function (other) {
+                if (map === other) {
+                    present = true;
+                }
+            });
+
+            if (!present) {
+                this._syncMaps.push(map);
+            }
+
+            return this;
+        },
+
+        // overload methods on originalMap to replay on _syncMaps;
+        _initSync: function () {
+            if (this._syncMaps) {
+                return;
+            }
+            var originalMap = this;
+
+            this._syncMaps = [];
+
+            L.extend(originalMap, {
                 setView: function (center, zoom, options, sync) {
                     if (!sync) {
                         originalMap._syncMaps.forEach(function (toSync) {
@@ -26,28 +49,23 @@
                             toSync.panBy(offset, options, true);
                         });
                     }
+
                     return L.Map.prototype.panBy.call(this, offset, options);
                 },
 
-                _onResize: function (event, sync) {
-                    if (!sync) {
-                        originalMap._syncMaps.forEach(function (toSync) {
-                            toSync._onResize(event, true);
-                        });
-                    }
+                _onResize: function (event) {
+                    originalMap._syncMaps.forEach(function (toSync) {
+                        toSync._onResize(event);
+                    });
                     return L.Map.prototype._onResize.call(this, event);
                 }
-            }));
+            });
 
-            if (!originalMap._syncZoomendAttached) {
-                originalMap._syncZoomendAttached = true;
-
-                originalMap.on('zoomend', function () {
-                    originalMap._syncMaps.forEach(function (toSync) {
-                        toSync.setView(originalMap.getCenter(), originalMap.getZoom(), {reset: false}, true);
-                    });
-                }, this);
-            }
+            originalMap.on('zoomend', function () {
+                originalMap._syncMaps.forEach(function (toSync) {
+                    toSync.setView(originalMap.getCenter(), originalMap.getZoom(), {reset: false}, true);
+                });
+            }, this);
 
             originalMap.dragging._draggable._updatePosition = function () {
                 L.Draggable.prototype._updatePosition.call(this);
@@ -57,8 +75,6 @@
                     toSync.fire('moveend');
                 });
             };
-
-            return originalMap;
         }
     });
 
