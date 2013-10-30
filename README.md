@@ -11,7 +11,9 @@ Usage
 ## Two maps.
 With two map objects, `mapA` and `mapB`, call `mapA.sync(mapB)` to sync interactions on `mapA` with `mapB`.
 
-In order to make the other direction work, you should make another call: `mapB.sync(mapA)`
+In order to make the other direction work, you should make another call: `mapB.sync(mapA)`.
+
+When in need to unsync maps simply call `mapA.unsync(mapB)` to release sync interactions on `mapB` and `mapB.unsync(mapA)` to release `mapA`.
 
 
 ## More than two maps
@@ -25,4 +27,9 @@ mapB.sync(mapA);
 mapB.sync(mapC);
 mapC.sync(mapA);
 mapC.sync(mapB);
+
+// unsynchronize two of the previous maps
+mapA.unsync(mapB);
+mapB.unsync(mapA);
+
 ```
