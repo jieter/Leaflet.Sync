@@ -23,6 +23,18 @@
 
             return this;
         },
+        
+        // unsync maps from each other
+        unsync: function (map) {
+            self = this;
+            
+            // remove macthing map instance
+            this._syncMaps.forEach(function (synced, id) {
+                if (map === synced) {
+                  self._syncMaps.splice(id, 1);
+                }
+            });
+        },
 
         // overload methods on originalMap to replay on _syncMaps;
         _initSync: function () {
