@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "mocha-phantomjs test/index.html"
   },
   "repository": {
     "type": "git",
