@@ -3,7 +3,7 @@ Leaflet.Sync
 
 Synchronized view of two maps.
 
-<a href="http://blog.thematicmapping.org/2013/06/creating-synchronized-view-of-two-maps.html">More information</a>
+[More information in original blog post by @turban](http://blog.thematicmapping.org/2013/06/creating-synchronized-view-of-two-maps.html)
 
 Usage
 -----
@@ -11,13 +11,12 @@ Usage
 ## Two maps.
 With two map objects, `mapA` and `mapB`, call `mapA.sync(mapB)` to sync interactions on `mapA` with `mapB`.
 
-In order to make the other direction work, you should make another call: `mapB.sync(mapA)`.
+In order to make the other direction work, you should make another call: `mapB.sync(mapA)`
 
 When in need to unsync maps simply call `mapA.unsync(mapB)` to release sync interactions on `mapB` and `mapB.unsync(mapA)` to release `mapA`.
 
-
 ## More than two maps
-Just make more calls to `map.sync()`, with different map objects. Interaction will be synced to all of them. If you want the actions to be synced vice-versa, you should synchronise all directions.
+Just make more calls to `map.sync()`, with different map objects. Interaction will be synced to all of them. If you want the actions to be synced vice-versa, you should synchronize all directions.
 
 ```JavaScript
 // synchronize three maps
@@ -27,9 +26,32 @@ mapB.sync(mapA);
 mapB.sync(mapC);
 mapC.sync(mapA);
 mapC.sync(mapB);
-
-// unsynchronize two of the previous maps
-mapA.unsync(mapB);
-mapB.unsync(mapA);
-
 ```
+
+API
+---
+
+### `mapA.sync(mapB, [options])`
+Replays all interaction on `mapA` on `mapB` to keep their views synchronised. Initially applies the view of `mapA` to `mapB`.
+
+```JavaScript
+{
+	noInitialSync: true // disables initial synchronisation of the maps.
+}
+```
+
+### `mapA.unsync(mapB)`
+
+Removes synchronisation.
+
+Running tests
+-------------
+
+Install dependencies and run tests:
+```
+npm install && npm test
+```
+or load `test/test.html` in your browser after installing the dependencies by running `npm install`.
+
+
+

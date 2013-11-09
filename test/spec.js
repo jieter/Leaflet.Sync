@@ -1,27 +1,52 @@
+/* jshint node:true */
+/* globals
+L:true, console:true,
+chai:true, describe:true, beforeEach:true, afterEach:true, it:true
+*/
 'use strict';
+
+chai.Assertion.addMethod('haveZoom', function (zoom) {
+	var map = this._obj;
+	var mapName = map._container.id;
+
+	new chai.Assertion(
+		map.getZoom(),
+		'zoom of ' + mapName
+	).to.equal(zoom);
+});
 
 chai.Assertion.addMethod('haveView', function (center, zoom) {
 	var delta = 0.1;
 
 	var map = this._obj;
+	var mapName = map._container.id;
+
+	center = L.latLng(center);
 	var actualCenter = map.getCenter();
 
-	new chai.Assertion(actualCenter.lat).to.be.closeTo(center[0], delta);
-	new chai.Assertion(actualCenter.lng).to.be.closeTo(center[1], delta);
+	new chai.Assertion(
+		actualCenter.lat,
+		'lat of ' + mapName
+	).to.be.closeTo(center.lat, delta);
+
+	new chai.Assertion(
+		actualCenter.lng,
+		'lng of ' + mapName
+	).to.be.closeTo(center.lng, delta);
 
 	if (zoom !== undefined) {
-		new chai.Assertion(map.getZoom()).to.equal(zoom);
+		map.should.haveZoom(zoom);
 	}
 });
 
 var NO_ANIMATE = {animate: false};
 
-// Generate coords for a square-wave pattern (m2) or
+// Generate coords for a square-wave pattern (m=2) or
 // a saw tooth with (m - 1) steps
 var pattern = function (n, m) {
 	var ticks = [];
 
-	n = n || 42;
+	n = n || 160;
 	m = m || 7;
 
 	for (var i = -n; i < n; i++) {
@@ -29,9 +54,20 @@ var pattern = function (n, m) {
 		ticks.push([(i + 1) % m, i]);
 	}
 	return ticks;
-}
+};
 
-// make make a map, while destroying it if it exists
+var crossedRect = function (a, b) {
+	return [
+		[a, -b], [-a, b], [a, b], [-a, b],
+		[-a, -b], [a, -b], [a, b], [-a, -b],
+		[0, 0], [0, b], [-a, 0],
+		[0, 0], [0, -b], [-a, 0],
+		[0, 0], [a, 0], [0, -b],
+		[0, b], [a, 0]
+	];
+};
+
+// make a map, while destroying it if it exists
 function makeMap(map, id) {
 	if (map) {
 		map.remove();
@@ -46,6 +82,10 @@ function makeMap(map, id) {
 	L.polyline(pattern(), {
 		weight: 1
 	}).addTo(map);
+	L.polyline(crossedRect(70, 110), {
+		weight: 1,
+		color: 'red'
+	}).addTo(map);
 
 	return map;
 }
@@ -53,21 +93,22 @@ function makeMap(map, id) {
 describe('L.Sync', function () {
 	chai.should();
 
-	var a, b;
+	var a, b, c;
 
-	beforeEach(function () {
-		a = makeMap(a, 'mapA');
-		b = makeMap(b, 'mapB');
+	describe('sync two maps', function () {
+		beforeEach(function () {
+			a = makeMap(a, 'mapA');
+			b = makeMap(b, 'mapB');
 
-		a.sync(b);
-	});
-	describe('syncing two maps', function () {
+			a.sync(b);
+		});
 
 		it('has correct inital view', function () {
 			a.should.haveView([0, 0], 5);
+			b.should.haveView([0, 0], 5);
 		});
 
-		it('returns map instance', function () {
+		it('returns correct map instance', function () {
 			a.sync(b).should.equal(a);
 		});
 
@@ -78,21 +119,137 @@ describe('L.Sync', function () {
 			a._syncMaps.should.have.length(1);
 		});
 
-		it('syncs setView', function () {
+		describe('setView', function () {
+			it('syncs', function () {
+				a.setView([1, 2], 3, NO_ANIMATE);
+				b.should.haveView([1, 2], 3);
+			});
+
+			it('still returns map instance', function () {
+				a.setView([1, 1], 3, NO_ANIMATE).should.equal(a);
+			});
+		});
+
+		describe('panBy', function () {
+			// fix frozen map dragging after this test.
+			it('syncs', function () {
+				a.panBy([200, 0], NO_ANIMATE);
+
+				b.should.haveView([0, 8.789]);
+
+				a.panBy([-200, 5], NO_ANIMATE);
+				b.should.haveView([-0.219, 0]);
+
+				a.panBy([0, -5], NO_ANIMATE);
+				b.should.haveView([0, 0]);
+			});
+
+			it('still returns map instance', function () {
+				a.panBy([0, 2], NO_ANIMATE).should.equal(a);
+			});
+		});
+
+		describe.skip('_onResize', function () {
+			afterEach(function () {
+				a.getContainer().style.height = '200px';
+			});
+
+			it('syncs onResize', function () {
+				a.getContainer().style.height = '400px';
+				a.setView([3, 2], 5);
+				a.invalidateSize(false);
+
+				console.log(a.getCenter(), b.getCenter());
+			});
+		});
+	});
+	describe('initial Sync', function () {
+		beforeEach(function () {
+			a = makeMap(a, 'mapA');
+			b = makeMap(b, 'mapB');
 			a.setView([1, 2], 3, NO_ANIMATE);
+			b.setView([0, 0], 5, NO_ANIMATE);
+		});
+
+		it('sync initial view by default', function () {
+			a.should.haveView([1, 2], 3);
+			b.should.haveView([0, 0], 5)
+
+			a.sync(b);
+
+			a.should.haveView([1, 2], 3);
 			b.should.haveView([1, 2], 3);
 		});
 
-		it.skip('two-way sync', function () {
+		it('does not sync initially when disabled', function () {
+			a.should.haveView([1, 2], 3);
+			b.should.haveView([0, 0], 5)
+
+			a.sync(b, {
+				noInitialSync: true
+			});
+
+			a.should.haveView([1, 2], 3);
+			b.should.haveView([0, 0], 5);
+		});
+	});
+
+	describe('sync three maps, simple (C <- A -> B)', function () {
+		beforeEach(function () {
+			a = makeMap(a, 'mapA');
+			b = makeMap(b, 'mapB');
+			c = makeMap(c, 'mapC');
+
+			a.sync(b);
+			a.sync(c);
+		});
+
+
+		it('syncs to B and C', function () {
+			a.setView([22, 21], 10);
+
+			a.should.haveView([22, 21], 10);
+			b.should.haveView([22, 21], 10);
+			c.should.haveView([22, 21], 10);
+		});
+
+		it('pans B and C', function () {
+			a.panTo([-20, 20], NO_ANIMATE);
+
+			b.should.haveView(a.getCenter(), a.getZoom());
+			c.should.haveView(a.getCenter(), a.getZoom());
+		});
+
+	});
+
+	/**
+	 * Stuff to look at later, skipped for now.
+	 */
+	describe.skip('more complicated syncs', function () {
+		beforeEach(function () {
+			a = makeMap(a, 'mapA');
+			b = makeMap(b, 'mapB');
+			c = makeMap(c, 'mapC');
+		});
+
+		/**
+		 * two-way syncing seems to have problems
+		 */
+		it('syncs two ways (A <-> B)', function () {
+			console.log('-- two-way sync');
+			a.sync(b);
 			b.sync(a);
 
+			console.log('-- a.setView');
 			a.setView([5, 6], 7, NO_ANIMATE);
-			a.should.haveView([5, 6], 6);
+			a.should.haveView([5, 6], 7);
 			b.should.haveView([5, 6], 7);
 
+			console.log('-- b.setView');
 			b.setView([3, 4], 5, NO_ANIMATE);
 			b.should.haveView([3, 4], 5);
 			a.should.haveView([3, 4], 5);
+			console.log('-- end of two way sync');
 		});
 
 		// fix frozen map dragging after this test.
@@ -100,33 +257,56 @@ describe('L.Sync', function () {
 		// 	a.panBy([200, 0], NO_ANIMATE);
 		// 	b.should.haveView([0, 8.789]);
 
-		// 	a.panBy([-200, 5], NO_ANIMATE);
-		// 	b.should.haveView([-0.219, 0]);
+		/**
+		 * Dragging is not propagated further than the next map in chain
+		 */
+		it('sync a chain (A -> B -> C)', function () {
+			console.log('-- sync a chain');
+			a.sync(b);
+			b.sync(c);
 
-		// 	a.panBy([0, -5], NO_ANIMATE);
-		// 	b.should.haveView([0, 0]);
-		// });
+			a.setView([1, 2], 3);
 
-		// it('syncs onResize', function () {
-		// 	a.getContainer().style.height = '400px';
-		// 	a.setView([3, 2], 5);
-		// 	a.invalidateSize(false);
+			a.should.haveView([1, 2], 3);
+			b.should.haveView([1, 2], 3);
+			c.should.haveView([1, 2], 3);
+		});
 
-		// 	console.log(a.getCenter(), b.getCenter());
-		// });
-		// it('is tested manually', function () {
+		/**
+		 * Rings do not work reliably yet
+		 */
+		it('sync a ring (A -> B -> C -> A)', function () {
+			a.sync(b);
+			b.sync(c);
+			c.sync(a);
 
-		// });
+			a.setView([4, 5], 6);
+			[a, b, c].forEach(function (map) {
+				map.should.haveView([4, 5], 6);
+			});
+
+			b.setView([5, 6], 7);
+			[a, b, c].forEach(function (map) {
+				map.should.haveView([5, 6], 7);
+			});
+		});
 	});
 
 	describe('unsyncing', function () {
+		beforeEach(function () {
+			a = makeMap(a, 'mapA');
+			b = makeMap(b, 'mapB');
+
+			a.sync(b);
+		});
+
 		it('does not fail on maps without any synced map', function () {
 			(function () {
 				b.unsync(b);
 			}).should.not.throw();
 		});
 
-		it('returns current instance', function () {
+		it('returns correct map instance', function () {
 			b.unsync(b).should.eql(b);
 			a.unsync(b).should.eql(a);
 		});
