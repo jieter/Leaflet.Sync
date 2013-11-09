@@ -34,6 +34,7 @@ API
 ### `mapA.sync(mapB, [options])`
 Replays all interaction on `mapA` on `mapB` to keep their views synchronised. Initially applies the view of `mapA` to `mapB`.
 
+Optional `options` map:
 ```JavaScript
 {
 	noInitialSync: true // disables initial synchronisation of the maps.
