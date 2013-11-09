@@ -6,8 +6,9 @@
     'use strict';
 
     L.Map = L.Map.extend({
-        sync: function (map) {
+        sync: function (map, options) {
             this._initSync();
+            options = options || {};
 
             // prevent double-syncing the map:
             var present = false;
@@ -21,6 +22,12 @@
                 this._syncMaps.push(map);
             }
 
+            if (!options.noInitialSync) {
+                map.setView(this.getCenter(), this.getZoom(), {
+                   animate: false,
+                   reset: true
+                });
+            }
             return this;
         },
 
@@ -65,7 +72,6 @@
                             toSync.panBy(offset, options, true);
                         });
                     }
-
                     return L.Map.prototype.panBy.call(this, offset, options);
                 },
 
