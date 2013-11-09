@@ -5,40 +5,6 @@ chai:true, describe:true, beforeEach:true, afterEach:true, it:true
 */
 'use strict';
 
-chai.Assertion.addMethod('haveZoom', function (zoom) {
-	var map = this._obj;
-	var mapName = map._container.id;
-
-	new chai.Assertion(
-		map.getZoom(),
-		'zoom of ' + mapName
-	).to.equal(zoom);
-});
-
-chai.Assertion.addMethod('haveView', function (center, zoom) {
-	var delta = 0.1;
-
-	var map = this._obj;
-	var mapName = map._container.id;
-
-	center = L.latLng(center);
-	var actualCenter = map.getCenter();
-
-	new chai.Assertion(
-		actualCenter.lat,
-		'lat of ' + mapName
-	).to.be.closeTo(center.lat, delta);
-
-	new chai.Assertion(
-		actualCenter.lng,
-		'lng of ' + mapName
-	).to.be.closeTo(center.lng, delta);
-
-	if (zoom !== undefined) {
-		map.should.haveZoom(zoom);
-	}
-});
-
 var NO_ANIMATE = {animate: false};
 
 // Generate coords for a square-wave pattern (m=2) or
@@ -104,8 +70,8 @@ describe('L.Sync', function () {
 		});
 
 		it('has correct inital view', function () {
-			a.should.haveView([0, 0], 5);
-			b.should.haveView([0, 0], 5);
+			a.should.have.view([0, 0], 5);
+			b.should.have.view([0, 0], 5);
 		});
 
 		it('returns correct map instance', function () {
@@ -122,7 +88,7 @@ describe('L.Sync', function () {
 		describe('setView', function () {
 			it('syncs', function () {
 				a.setView([1, 2], 3, NO_ANIMATE);
-				b.should.haveView([1, 2], 3);
+				b.should.have.view([1, 2], 3);
 			});
 
 			it('still returns map instance', function () {
@@ -135,13 +101,13 @@ describe('L.Sync', function () {
 			it('syncs', function () {
 				a.panBy([200, 0], NO_ANIMATE);
 
-				b.should.haveView([0, 8.789]);
+				b.should.have.view([0, 8.789]);
 
 				a.panBy([-200, 5], NO_ANIMATE);
-				b.should.haveView([-0.219, 0]);
+				b.should.have.view([-0.2197, 0]);
 
 				a.panBy([0, -5], NO_ANIMATE);
-				b.should.haveView([0, 0]);
+				b.should.have.view([0, 0]);
 			});
 
 			it('still returns map instance', function () {
@@ -172,25 +138,25 @@ describe('L.Sync', function () {
 		});
 
 		it('sync initial view by default', function () {
-			a.should.haveView([1, 2], 3);
-			b.should.haveView([0, 0], 5)
+			a.should.have.view([1, 2], 3);
+			b.should.have.view([0, 0], 5)
 
 			a.sync(b);
 
-			a.should.haveView([1, 2], 3);
-			b.should.haveView([1, 2], 3);
+			a.should.have.view([1, 2], 3);
+			b.should.have.view([1, 2], 3);
 		});
 
 		it('does not sync initially when disabled', function () {
-			a.should.haveView([1, 2], 3);
-			b.should.haveView([0, 0], 5)
+			a.should.have.view([1, 2], 3);
+			b.should.have.view([0, 0], 5)
 
 			a.sync(b, {
 				noInitialSync: true
 			});
 
-			a.should.haveView([1, 2], 3);
-			b.should.haveView([0, 0], 5);
+			a.should.have.view([1, 2], 3);
+			b.should.have.view([0, 0], 5);
 		});
 	});
 
@@ -208,16 +174,16 @@ describe('L.Sync', function () {
 		it('syncs to B and C', function () {
 			a.setView([22, 21], 10);
 
-			a.should.haveView([22, 21], 10);
-			b.should.haveView([22, 21], 10);
-			c.should.haveView([22, 21], 10);
+			a.should.have.view([22, 21], 10);
+			b.should.have.view([22, 21], 10);
+			c.should.have.view([22, 21], 10);
 		});
 
 		it('pans B and C', function () {
 			a.panTo([-20, 20], NO_ANIMATE);
 
-			b.should.haveView(a.getCenter(), a.getZoom());
-			c.should.haveView(a.getCenter(), a.getZoom());
+			b.should.have.view(a.getCenter(), a.getZoom());
+			c.should.have.view(a.getCenter(), a.getZoom());
 		});
 
 	});
@@ -242,20 +208,20 @@ describe('L.Sync', function () {
 
 			console.log('-- a.setView');
 			a.setView([5, 6], 7, NO_ANIMATE);
-			a.should.haveView([5, 6], 7);
-			b.should.haveView([5, 6], 7);
+			a.should.have.view([5, 6], 7);
+			b.should.have.view([5, 6], 7);
 
 			console.log('-- b.setView');
 			b.setView([3, 4], 5, NO_ANIMATE);
-			b.should.haveView([3, 4], 5);
-			a.should.haveView([3, 4], 5);
+			b.should.have.view([3, 4], 5);
+			a.should.have.view([3, 4], 5);
 			console.log('-- end of two way sync');
 		});
 
 		// fix frozen map dragging after this test.
 		// it('syncs panBy', function () {
 		// 	a.panBy([200, 0], NO_ANIMATE);
-		// 	b.should.haveView([0, 8.789]);
+		// 	b.should.have.view([0, 8.789]);
 
 		/**
 		 * Dragging is not propagated further than the next map in chain
@@ -267,9 +233,9 @@ describe('L.Sync', function () {
 
 			a.setView([1, 2], 3);
 
-			a.should.haveView([1, 2], 3);
-			b.should.haveView([1, 2], 3);
-			c.should.haveView([1, 2], 3);
+			a.should.have.view([1, 2], 3);
+			b.should.have.view([1, 2], 3);
+			c.should.have.view([1, 2], 3);
 		});
 
 		/**
@@ -282,12 +248,12 @@ describe('L.Sync', function () {
 
 			a.setView([4, 5], 6);
 			[a, b, c].forEach(function (map) {
-				map.should.haveView([4, 5], 6);
+				map.should.have.view([4, 5], 6);
 			});
 
 			b.setView([5, 6], 7);
 			[a, b, c].forEach(function (map) {
-				map.should.haveView([5, 6], 7);
+				map.should.have.view([5, 6], 7);
 			});
 		});
 	});

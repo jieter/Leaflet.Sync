@@ -28,7 +28,8 @@
     "grunt-mocha-phantomjs": "~0.3.0",
     "grunt-contrib-connect": "~0.5.0",
     "leaflet": "~0.6.4",
-    "chai": "~1.8.0"
+    "chai": "~1.8.0",
+    "chai-leaflet": "0.0.2"
   },
   "author": "Bjorn Sandvik",
   "readmeFilename": "README.md"
