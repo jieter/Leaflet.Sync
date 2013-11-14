@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Leaflet Sync - Leaflet-MiniMap debug page</title>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+    <link rel="stylesheet" href="Control.MiniMap.css" />
+    <style type="text/css">
+        html, body { width: 100%; height: 100%; margin: 0; }
+        #toner, #watercolor { width: 49.5%; height: 100%; }
+        #toner { float: left; }
+        #watercolor { float: right; }
+    </style>
+</head>
+
+<body>
+    <div id="toner"></div>
+    <div id="watercolor"></div>
+
+    <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet-src.js"></script>
+    <script src="../../L.Map.Sync.js"></script>
+    <script src="Control.MiniMap.js"></script>
+    <script type="text/javascript">
+
+    var tonerMap = L.map('toner');
+    var watercolorMap = L.map('watercolor');
+
+    [tonerMap, watercolorMap].forEach(function (map) {
+        map.setView([59.336, 5.967], 14);
+        map.attributionControl.setPrefix('');
+    });
+
+    var stamenOptions = {
+        attribution:
+            'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
+            '<a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; ' +
+            'Map data OpenStreetmap',
+        subdomains: 'abcd',
+        minZoom: 0,
+        maxZoom: 20
+    };
+
+    // tilelayer factory functions
+    var toner = function () {
+        return L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', stamenOptions);
+    };
+    var watercolor = function () {
+        return L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', stamenOptions);
+    };
+
+    toner().addTo(tonerMap);
+    watercolor().addTo(watercolorMap);
+
+    tonerMap.sync(watercolorMap);
+    watercolorMap.sync(tonerMap);
+
+    //minimap
+    L.control.minimap(
+        toner()
+    ).addTo(watercolorMap);
+
+
+    console.log('-- ready initializing');
+    </script>
+</body>
+</html>
