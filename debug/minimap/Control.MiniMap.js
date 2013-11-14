@@ -196,7 +196,7 @@ L.Control.MiniMap = L.Control.extend({
 	_onMiniMapMoved: function (e) {
 		if (!this._mainMapMoving) {
 			this._miniMapMoving = true;
-			this._mainMap.setView(this._miniMap.getCenter(), this._decideZoom(false));
+			this._mainMap.setView(this._miniMap.getCenter(), this._decideZoom(false), {}, true);
 			this._shadowRect.setStyle({opacity:0,fillOpacity:0});
 		} else {
 			this._mainMapMoving = false;
