@@ -97,7 +97,7 @@ describe('L.Sync', function () {
 		});
 
 		describe('panBy', function () {
-			// fix frozen map dragging after this test.
+
 			it('syncs', function () {
 				a.panBy([200, 0], NO_ANIMATE);
 
@@ -115,7 +115,7 @@ describe('L.Sync', function () {
 			});
 		});
 
-		describe.skip('_onResize', function () {
+		describe('_onResize', function () {
 			afterEach(function () {
 				a.getContainer().style.height = '200px';
 			});
@@ -124,11 +124,10 @@ describe('L.Sync', function () {
 				a.getContainer().style.height = '400px';
 				a.setView([3, 2], 5);
 				a.invalidateSize(false);
-
-				console.log(a.getCenter(), b.getCenter());
 			});
 		});
 	});
+
 	describe('initial Sync', function () {
 		beforeEach(function () {
 			a = makeMap(a, 'mapA');
@@ -170,7 +169,6 @@ describe('L.Sync', function () {
 			a.sync(c);
 		});
 
-
 		it('syncs to B and C', function () {
 			a.setView([22, 21], 10);
 
@@ -185,13 +183,12 @@ describe('L.Sync', function () {
 			b.should.have.view(a.getCenter(), a.getZoom());
 			c.should.have.view(a.getCenter(), a.getZoom());
 		});
-
 	});
 
 	/**
 	 * Stuff to look at later, skipped for now.
 	 */
-	describe.skip('more complicated syncs', function () {
+	describe('more complicated syncs', function () {
 		beforeEach(function () {
 			a = makeMap(a, 'mapA');
 			b = makeMap(b, 'mapB');
@@ -202,36 +199,26 @@ describe('L.Sync', function () {
 		 * two-way syncing seems to have problems
 		 */
 		it('syncs two ways (A <-> B)', function () {
-			console.log('-- two-way sync');
 			a.sync(b);
 			b.sync(a);
 
-			console.log('-- a.setView');
 			a.setView([5, 6], 7, NO_ANIMATE);
 			a.should.have.view([5, 6], 7);
 			b.should.have.view([5, 6], 7);
 
-			console.log('-- b.setView');
 			b.setView([3, 4], 5, NO_ANIMATE);
 			b.should.have.view([3, 4], 5);
 			a.should.have.view([3, 4], 5);
-			console.log('-- end of two way sync');
 		});
-
-		// fix frozen map dragging after this test.
-		// it('syncs panBy', function () {
-		// 	a.panBy([200, 0], NO_ANIMATE);
-		// 	b.should.have.view([0, 8.789]);
 
 		/**
 		 * Dragging is not propagated further than the next map in chain
 		 */
 		it('sync a chain (A -> B -> C)', function () {
-			console.log('-- sync a chain');
 			a.sync(b);
 			b.sync(c);
 
-			a.setView([1, 2], 3);
+			a.setView([1, 2], 3, NO_ANIMATE);
 
 			a.should.have.view([1, 2], 3);
 			b.should.have.view([1, 2], 3);
@@ -246,12 +233,12 @@ describe('L.Sync', function () {
 			b.sync(c);
 			c.sync(a);
 
-			a.setView([4, 5], 6);
+			a.setView([4, 5], 6, NO_ANIMATE);
 			[a, b, c].forEach(function (map) {
 				map.should.have.view([4, 5], 6);
 			});
 
-			b.setView([5, 6], 7);
+			b.setView([5, 6], 7, NO_ANIMATE);
 			[a, b, c].forEach(function (map) {
 				map.should.have.view([5, 6], 7);
 			});

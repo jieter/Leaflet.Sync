@@ -36,7 +36,6 @@
             var self = this;
 
             if (this._syncMaps) {
-                // remove matching map instance
                 this._syncMaps.forEach(function (synced, id) {
                     if (map === synced) {
                         self._syncMaps.splice(id, 1);
@@ -87,7 +86,10 @@
 
             originalMap.on('zoomend', function () {
                 originalMap._syncMaps.forEach(function (toSync) {
-                    toSync.setView(originalMap.getCenter(), originalMap.getZoom(), {reset: false}, true);
+                    toSync.setView(originalMap.getCenter(), originalMap.getZoom(), {
+                        animate: false,
+                        reset: false
+                    });
                 });
             }, this);
 
@@ -101,5 +103,4 @@
             };
         }
     });
-
 })();

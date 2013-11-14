@@ -45,6 +45,11 @@ Optional `options` map:
 
 Removes synchronisation.
 
+Known issues
+------------
+
+ - Dragging is not propagated more than one level (In a `a.sync(b.sync(c))` situation, dragging on `a` will not result in change on `c`).
+
 Running tests
 -------------
 
@@ -52,7 +57,7 @@ Install dependencies and run tests:
 ```
 npm install && npm test
 ```
-or load `test/test.html` in your browser after installing the dependencies by running `npm install`.
+or load `test/index.html` in your browser after installing the dependencies by running `npm install`.
 
 
 
