@@ -3,25 +3,23 @@
 	<meta charset="utf-8">
 	<title>Leaflet.Sync Tests</title>
 	<link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
-	<!--[if lte IE 8]>
-		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
-	<![endif]-->
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+
 	<style>
-	.map, .label {
-		width: 200px;
-		height: 200px;
-		float: left;
-	}
-	.label {
-		width: 40px;
-		text-align: left;
-		font-size: 40px;
-		padding: 20px 30px;
-	}
-	#mocha {
-		clear: both;
-	}
+		.map, .label {
+			width: 200px;
+			height: 200px;
+			float: left;
+		}
+		.label {
+			width: 40px;
+			text-align: left;
+			font-size: 40px;
+			padding: 20px 30px;
+		}
+		#mocha {
+			clear: both;
+		}
 	</style>
 </head>
 <body>
@@ -32,13 +30,14 @@
 	</div>
 	<div id="mocha"></div>
 
-	<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet-src.js"></script>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet-src.js"></script>
 
 	<script src="../L.Map.Sync.js"></script>
 
 	<script src="../node_modules/chai/chai.js"></script>
 	<script src="../node_modules/mocha/mocha.js"></script>
 	<script src="../node_modules/chai-leaflet/chai-leaflet.js"></script>
+
 	<script>
 		mocha.setup('bdd');
 	</script>

@@ -3,10 +3,8 @@
 <head>
     <meta charset="utf-8">
     <title>Leaflet Sync Demo</title>
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
-    <!--[if lte IE 8]>
-        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
-    <![endif]-->
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+
     <style type="text/css">
         html, body { width: 100%; height: 100%; margin: 0; }
         #map1, #map2 { width: 49.5%; height: 100%; }
@@ -18,34 +16,34 @@
 <body>
     <div id="map1"></div>
     <div id="map2"></div>
-    <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet-src.js"></script>
-    <script type="text/javascript" src="L.Map.Sync.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet-src.js"></script>
+    <script src="L.Map.Sync.js"></script>
     <script type="text/javascript">
+         var center = [59.336, 5.967];
 
+        var layer1 = L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=norges_grunnkart&zoom={z}&x={x}&y={y}');
 
-    var layer1 = L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=norges_grunnkart&zoom={z}&x={x}&y={y}');
+        var layer2 = L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}', {
+            attribution: '© Kartverket'
+        });
 
-    var layer2 = L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}', {
-        attribution: '© Kartverket'
-    });
+        var map1 = L.map('map1', {
+            layers: [layer1],
+            center: center,
+            zoom: 14
+        });
 
-    var map1 = L.map('map1', {
-        layers: [layer1],
-        center: [59.336, 5.967],
-        zoom: 14
-    });
+        map1.attributionControl.setPrefix('');
 
-    map1.attributionControl.setPrefix('');
+        var map2 = L.map('map2', {
+            layers: [layer2],
+            center: center,
+            zoom: 14,
+            zoomControl: false
+        });
 
-    var map2 = L.map('map2', {
-        layers: [layer2],
-        center: [59.336, 5.967],
-        zoom: 14,
-        zoomControl: false
-    });
-
-    map1.sync(map2);
-    map2.sync(map1);
+        map1.sync(map2);
+        map2.sync(map1);
 
     </script>
 </body>
