@@ -1,6 +1,6 @@
 /* jshint node:true */
 /* globals
-L:true, console:true,
+L:true,
 chai:true, describe:true, beforeEach:true, afterEach:true, it:true
 */
 'use strict';
@@ -138,7 +138,7 @@ describe('L.Sync', function () {
 
 		it('sync initial view by default', function () {
 			a.should.have.view([1, 2], 3);
-			b.should.have.view([0, 0], 5)
+			b.should.have.view([0, 0], 5);
 
 			a.sync(b);
 
@@ -148,7 +148,7 @@ describe('L.Sync', function () {
 
 		it('does not sync initially when disabled', function () {
 			a.should.have.view([1, 2], 3);
-			b.should.have.view([0, 0], 5)
+			b.should.have.view([0, 0], 5);
 
 			a.sync(b, {
 				noInitialSync: true

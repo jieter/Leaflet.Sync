@@ -1,0 +1,14 @@
+{
+	"browser": true,
+    "strict": true,
+
+	"quotmark": "single",
+
+	"trailing": true,
+	"white": true,
+	"maxlen": 120,
+
+    "globals": {
+        "L": true
+    }
+}
