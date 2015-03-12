@@ -5,6 +5,11 @@ Synchronized view of two maps. Tested with Leaflet 0.7.x and Leaflet 0.8-dev (48
 
 [More information in original blog post by @turban](http://blog.thematicmapping.org/2013/06/creating-synchronized-view-of-two-maps.html)
 
+Installation
+------------
+
+Using npm for browserify `npm install leaflet.sync`, or just download `L.Map.Sync.js` and add a script tag for it in you html.
+
 Usage
 -----
 
@@ -58,6 +63,3 @@ Install dependencies and run tests:
 npm install && npm test
 ```
 or load `test/index.html` in your browser after installing the dependencies by running `npm install`.
-
-
-
