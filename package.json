@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "eslint L.Map.Sync.js"
+    "test": "eslint L.Map.Sync.js",
+    "release": "mversion patch -m"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,8 @@
     "chai-leaflet": "0.0.2",
     "eslint": "^0.15.0",
     "leaflet": "~0.7.3",
-    "mocha": "^2.1.0"
+    "mocha": "^2.1.0",
+    "mversion": "^1.10.0"
   },
   "author": "Bjorn Sandvik",
   "readmeFilename": "README.md"
