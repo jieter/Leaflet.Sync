@@ -1,6 +1,6 @@
 {
   "name": "Leaflet.Sync",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Sync two or more Leaflet map instances",
   "main": "L.Map.Sync.js",
   "directories": {

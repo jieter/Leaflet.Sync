@@ -1,9 +1,9 @@
 {
   "name": "Leaflet.Sync",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "homepage": "https://github.com/turban/Leaflet.Sync",
   "authors": [
-  	"Bjorn Sandvik",
+    "Bjorn Sandvik",
     "Jan Pieter Waagmeester <jieter@jieter.nl>"
   ],
   "description": "Sync interaction across multiple Leaflet maps",
