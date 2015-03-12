@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha-phantomjs test/index.html"
+    "test": "eslint L.Map.Sync.js"
   },
   "repository": {
     "type": "git",
@@ -20,16 +20,11 @@
     "sync"
   ],
   "devDependencies": {
-    "jshint": "~2.1.11",
-    "mocha": "~1.13.0",
-    "grunt": "~0.4.1",
-    "matchdep": "~0.1.2",
-    "grunt-contrib-jshint": "~0.6.4",
-    "grunt-mocha-phantomjs": "~0.3.0",
-    "grunt-contrib-connect": "~0.5.0",
-    "leaflet": "~0.7.1",
     "chai": "~1.8.0",
-    "chai-leaflet": "0.0.2"
+    "chai-leaflet": "0.0.2",
+    "eslint": "^0.15.0",
+    "leaflet": "~0.7.3",
+    "mocha": "^2.1.0"
   },
   "author": "Bjorn Sandvik",
   "readmeFilename": "README.md"
