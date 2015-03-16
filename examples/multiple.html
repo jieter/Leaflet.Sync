@@ -21,7 +21,7 @@
     </div>
 
     <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-    <script src="L.Map.Sync.js"></script>
+    <script src="../L.Map.Sync.js"></script>
 
     <script type="text/javascript">
         var center = [59.336, 5.967];
@@ -39,7 +39,6 @@
         var toner = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', stamenOptions);
         var tonerLite = L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', stamenOptions);
         var watercolor = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', stamenOptions);
-
 
         var map = L.map('map', {
             layers: [toner],
@@ -62,7 +61,6 @@
 
         map.sync(mapA);
         map.sync(mapB);
-
 
         // If you want interaction with mapA|B to be synchronized on map,
         // add other links as well.

@@ -8,7 +8,7 @@ Synchronized view of two maps. Tested with Leaflet 0.7.x and Leaflet 0.8-dev (48
 Installation
 ------------
 
-Using npm for browserify `npm install leaflet.sync`, or just download `L.Map.Sync.js` and add a script tag for it in you html.
+Using npm for browserify `npm install leaflet.sync` (and `require('leaflet.sync')`), or just download `L.Map.Sync.js` and add a script tag for it in you html.
 
 Usage
 -----
@@ -54,6 +54,7 @@ Known issues
 ------------
 
  - Dragging is not propagated more than one level (In a `a.sync(b.sync(c))` situation, dragging on `a` will not result in change on `c`).
+ - Doesn't work with the L.Google plugin.
 
 Running tests
 -------------

@@ -1,8 +1,3 @@
-/* jshint node:true */
-/* globals
-L:true,
-chai:true, describe:true, beforeEach:true, afterEach:true, it:true
-*/
 'use strict';
 
 var NO_ANIMATE = {animate: false};
