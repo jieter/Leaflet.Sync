@@ -20,31 +20,34 @@
     <script src="../L.Map.Sync.js"></script>
 
     <script type="text/javascript">
-        var center = [59.336, 5.967];
-
-        var layer1 = L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=norges_grunnkart&zoom={z}&x={x}&y={y}');
-        var layer2 = L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}', {
-            attribution: '© Kartverket'
-        });
+        var center = [59.336, 5.967],
+            zoom = 2;
         var bounds = L.latLngBounds([[59.3160, 5.9374], [59.3559, 5.9965]]);
 
         var map1 = L.map('map1', {
-            layers: [layer1],
-            center: center,
-            zoom: 14,
-            noWrap: true,
             maxBounds: bounds
-        });
-
+        }).setView(center, zoom);
         map1.attributionControl.setPrefix('');
 
         var map2 = L.map('map2', {
-            layers: [layer2],
-            center: center,
-            zoom: 14,
-            zoomControl: false,
+            zoomControl: false
+        }).setView(center, zoom);
+
+        var layer1 = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {
+            subdomains: 'abcd',
+            minZoom: 0,
+            maxZoom: 20,
             noWrap: true
         });
+        layer1.addTo(map1);
+
+        L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png',{
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            subdomains: 'abcd',
+            minZoom: 0,
+            maxZoom: 20,
+            noWrap: true
+        }).addTo(map2);
 
         map1.sync(map2);
         map2.sync(map1);
