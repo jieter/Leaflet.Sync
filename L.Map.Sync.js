@@ -98,6 +98,11 @@
                 var self = this;
                 originalMap._syncMaps.forEach(function (toSync) {
                     L.DomUtil.setPosition(toSync.dragging._draggable._element, self._newPos);
+                    toSync.eachLayer(function (l) {
+                        if (l._google !== undefined) {
+                            l._google.setCenter(originalMap.getCenter());
+                        }
+                    });
                     toSync.fire('moveend');
                 });
             };

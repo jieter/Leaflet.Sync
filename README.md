@@ -54,7 +54,6 @@ Known issues
 ------------
 
  - Dragging is not propagated more than one level (In a `a.sync(b.sync(c))` situation, dragging on `a` will not result in change on `c`).
- - Doesn't work with the L.Google plugin.
 
 Running tests
 -------------
