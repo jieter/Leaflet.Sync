@@ -46,6 +46,11 @@
             return this;
         },
 
+        // Checks if the maps is synced with anything
+        isSynced: function () {
+            return (this.hasOwnProperty('_syncMaps') && Object.keys(this._syncMaps).length > 0);
+        },
+
         // overload methods on originalMap to replay on _syncMaps;
         _initSync: function () {
             if (this._syncMaps) {

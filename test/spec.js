@@ -191,6 +191,18 @@ describe('L.Sync', function () {
 		});
 
 		/**
+		 * Check if isSynced works
+		 */
+		it('isSynced', function () {
+			a.sync(b);
+			b.sync(a);
+
+			a.isSynced().should.be.true;
+			b.isSynced().should.be.true;
+			c.isSynced().should.be.false;
+		});
+
+		/**
 		 * two-way syncing seems to have problems
 		 */
 		it('syncs two ways (A <-> B)', function () {
