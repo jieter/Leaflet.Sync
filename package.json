@@ -26,9 +26,8 @@
     "eslint": "^0.15.0",
     "leaflet": "~0.7.3",
     "mocha": "^2.1.0",
-    "mocha-phantomjs": "^3.5.3",
-    "mversion": "^1.10.0",
-    "phantomjs": "^1.9.16"
+    "mocha-phantomjs": "^4.0.1",
+    "mversion": "^1.10.0"
   },
   "author": "Bjorn Sandvik",
   "readmeFilename": "README.md"
