@@ -91,10 +91,15 @@
 
             originalMap.on('zoomend', function () {
                 originalMap._syncMaps.forEach(function (toSync) {
-                    toSync.setView(originalMap.getCenter(), originalMap.getZoom(), {
-                        animate: false,
-                        reset: false
-                    });
+                    if (originalMap.getZoom() <= toSync.getMinZoom()) {
+                        originalMap.setZoom(toSync.getZoom());
+                        toSync.panTo(originalMap.getCenter());
+                    } else {
+                        toSync.setView(originalMap.getCenter(), originalMap.getZoom(), {
+                            animate: false,
+                            reset: false
+                        });
+                    }
                 });
             }, this);
 
