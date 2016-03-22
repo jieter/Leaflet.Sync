@@ -1,7 +1,7 @@
 Leaflet.Sync
 ============
 
-Synchronized view of two maps. Tested with Leaflet 0.7.x and Leaflet 0.8-dev (48677f2).
+Synchronized view of two maps. Tested with Leaflet 0.7.7.
 
 [More information in original blog post by @turban](http://blog.thematicmapping.org/2013/06/creating-synchronized-view-of-two-maps.html)
 
@@ -37,18 +37,23 @@ API
 ---
 
 ### `mapA.sync(mapB, [options])`
-Replays all interaction on `mapA` on `mapB` to keep their views synchronised. Initially applies the view of `mapA` to `mapB`.
+Replays all interaction on `mapA` on `mapB` to keep their views synchronized. Initially synchronizes the view of `mapA` to `mapB`.
 
-Optional `options` map:
+Optional `options`:
 ```JavaScript
 {
-	noInitialSync: true // disables initial synchronisation of the maps.
+	noInitialSync: true // disables initial synchronization of the maps.
 }
 ```
 
 ### `mapA.unsync(mapB)`
 
-Removes synchronisation.
+Removes synchronization.
+
+### `mapA.isSynced()`
+
+Returns true if the map is synchronized with any other map.
+
 
 Known issues
 ------------
