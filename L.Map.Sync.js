@@ -5,28 +5,23 @@
 (function () {
     'use strict';
 
+    var NO_ANIMATION =  {
+        animate: false,
+        reset: true
+    };
+
     L.Map = L.Map.extend({
         sync: function (map, options) {
             this._initSync();
             options = options || {};
 
             // prevent double-syncing the map:
-            var present = false;
-            this._syncMaps.forEach(function (other) {
-                if (map === other) {
-                    present = true;
-                }
-            });
-
-            if (!present) {
+            if (this._syncMaps.indexOf(map) === -1) {
                 this._syncMaps.push(map);
             }
 
             if (!options.noInitialSync) {
-                map.setView(this.getCenter(), this.getZoom(), {
-                    animate: false,
-                    reset: true
-                });
+                map.setView(this.getCenter(), this.getZoom(), NO_ANIMATION);
             }
             return this;
         },
@@ -51,7 +46,7 @@
             return (this.hasOwnProperty('_syncMaps') && Object.keys(this._syncMaps).length > 0);
         },
 
-        // overload methods on originalMap to replay on _syncMaps;
+        // overload methods on originalMap to replay interactions on _syncMaps;
         _initSync: function () {
             if (this._syncMaps) {
                 return;
@@ -91,10 +86,7 @@
 
             originalMap.on('zoomend', function () {
                 originalMap._syncMaps.forEach(function (toSync) {
-                    toSync.setView(originalMap.getCenter(), originalMap.getZoom(), {
-                        animate: false,
-                        reset: false
-                    });
+                    toSync.setView(originalMap.getCenter(), originalMap.getZoom(), NO_ANIMATION);
                 });
             }, this);
 
@@ -103,9 +95,9 @@
                 var self = this;
                 originalMap._syncMaps.forEach(function (toSync) {
                     L.DomUtil.setPosition(toSync.dragging._draggable._element, self._newPos);
-                    toSync.eachLayer(function (l) {
-                        if (l._google !== undefined) {
-                            l._google.setCenter(originalMap.getCenter());
+                    toSync.eachLayer(function (layer) {
+                        if (layer._google !== undefined) {
+                            layer._google.setCenter(originalMap.getCenter());
                         }
                     });
                     toSync.fire('moveend');
