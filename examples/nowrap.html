@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <title>Leaflet Sync Demo (nowrap + maxbounds)</title>
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
-    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet-src.js"></script>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v1.0.0-beta.2/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v1.0.0-beta.2/leaflet-src.js"></script>
 
     <style type="text/css">
         html, body { width: 100%; height: 100%; margin: 0; }
@@ -20,39 +20,28 @@
     <script src="../L.Map.Sync.js"></script>
 
     <script type="text/javascript">
-        var center = [59.336, 5.967],
-            zoom = 2;
-        var bounds = L.latLngBounds([[59.3160, 5.9374], [59.3559, 5.9965]]);
+    var noWrapCRS = L.extend({}, L.CRS.EPSG3857, {wrapLat: null, wrapLng: null});
 
-        var map1 = L.map('map1', {
-            maxBounds: bounds
-        }).setView(center, zoom);
-        map1.attributionControl.setPrefix('');
+    var center = [60, 6];
+    var zoom = 6;
+    var bounds = L.latLngBounds([[50, 0], [60, 10]]);
 
-        var map2 = L.map('map2', {
-            zoomControl: false
-        }).setView(center, zoom);
+    var map1 = L.map('map1', {maxBounds: bounds}).setView(center, zoom);
+    var map2 = L.map('map2', {maxBounds: bounds});
 
-        var layer1 = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {
-            subdomains: 'abcd',
-            minZoom: 0,
-            maxZoom: 20,
-            noWrap: true
-        });
-        layer1.addTo(map1);
+    map1.sync(map2);
+    map2.sync(map1);
 
-        L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png',{
-            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-            subdomains: 'abcd',
-            minZoom: 0,
-            maxZoom: 20,
-            noWrap: true
-        }).addTo(map2);
+    var options = {
+        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        subdomains: 'abcd',
+        maxZoom: 20
+    }
+    L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', options).addTo(map1);
+    L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', options).addTo(map2);
 
-        map1.sync(map2);
-        map2.sync(map1);
-
-        L.rectangle(bounds).addTo(map1);
+    // visualize the bounds
+    L.rectangle(bounds).addTo(map1);
 
     </script>
 </body>

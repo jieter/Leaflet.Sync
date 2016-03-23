@@ -7,7 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "eslint L.Map.Sync.js && mocha-phantomjs test/index.html",
+    "lint": "eslint L.Map.Sync.js",
+    "test": "npm run lint && npm run spec",
+    "spec": "phantomjs ./node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js test/index.html",
     "release": "mversion patch -m"
   },
   "repository": {
@@ -23,11 +25,13 @@
   "devDependencies": {
     "chai": "~3.5.0",
     "chai-leaflet": "0.0.11",
-    "eslint": "^1.10.0",
+    "eslint": "^2.4.0",
     "leaflet": "~0.7.7",
-    "mocha": "^2.1.0",
-    "mocha-phantomjs": "^4.0.1",
-    "mversion": "^1.10.0"
+    "mocha": "^2.3.0",
+    "mocha-phantomjs-core": "^2.0.0",
+    "mversion": "^1.10.0",
+    "phantomjs-prebuilt": "^2.1.4",
+    "prosthetic-hand": "^1.2.6"
   },
   "author": "Bjorn Sandvik",
   "readmeFilename": "README.md"

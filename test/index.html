@@ -32,21 +32,33 @@
 
 	<script src="../node_modules/leaflet/dist/leaflet.js"></script>
 
-	<script src="../L.Map.Sync.js"></script>
-
 	<script src="../node_modules/chai/chai.js"></script>
 	<script src="../node_modules/mocha/mocha.js"></script>
+	<script type="text/javascript" src="../node_modules/prosthetic-hand/dist/prosthetic-hand.js"></script>
 	<script src="../node_modules/chai-leaflet/chai-leaflet.js"></script>
 
 	<script>
+		if (typeof initMochaPhantomJS === 'function') {
+			initMochaPhantomJS();
+		}
 		mocha.setup('bdd');
+
+		// Trick Leaflet into believing we have a touchscreen (for Chrome)
+		if (window.Touch) { window.ontouchstart = function () {} };
+		// A couple of tests need the browser to be touch-capable
+		it.skipIfNotTouch = window.TouchEvent ? it : it.skip;
 	</script>
 
+	<script src="../L.Map.Sync.js"></script>
+
+	<!-- tests -->
+	<script src="helpers.js"></script>
 	<script src="spec.js"></script>
+	<script src="spec-maxbounds.js"></script>
 
 	<script>
 		mocha.globals(['L']);
-		(window.mochaPhantomJS || mocha).run();
+		mocha.run();
 	</script>
 </body>
 </html>
