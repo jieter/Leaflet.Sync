@@ -13,7 +13,16 @@
     L.Map = L.Map.extend({
         sync: function (map, options) {
             this._initSync();
-            options = options || {};
+            options = L.extend({
+                noInitialSync: false,
+                syncCursor: false,
+                syncCursorMarker: L.circleMarker([0, 0], {
+                    radius: 10,
+                    fillOpacity: 0.1,
+                    color: 'blue',
+                    fillColor: '#FFFFFF'
+                })
+            }, options);
 
             // prevent double-syncing the map:
             if (this._syncMaps.indexOf(map) === -1) {
@@ -22,6 +31,24 @@
 
             if (!options.noInitialSync) {
                 map.setView(this.getCenter(), this.getZoom(), NO_ANIMATION);
+            }
+            if (options.syncCursor) {
+                map.syncCursor = options.syncCursorMarker;
+                map.syncCursor.addTo(map);
+
+                var cursors = this._cursors;
+                cursors.push(map.syncCursor);
+                this.on('mousemove', function (e) {
+                    cursors.forEach(function (cursor) {
+                        cursor.setLatLng(e.latlng);
+                    });
+                });
+                this.on('mouseout', function (e) {
+                    cursors.forEach(function (cursor) {
+                        // TODO: hide cursor in stead of moving to 0, 0
+                        cursor.setLatLng([0, 0]);
+                    });
+                })
             }
             return this;
         },
@@ -37,6 +64,8 @@
                     }
                 });
             }
+
+            // TODO: remove cursorsync listeners
 
             return this;
         },
@@ -54,6 +83,7 @@
             var originalMap = this;
 
             this._syncMaps = [];
+            this._cursors = [];
 
             L.extend(originalMap, {
                 setView: function (center, zoom, options, sync) {
