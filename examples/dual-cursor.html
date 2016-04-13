@@ -39,10 +39,11 @@
             zoomControl: false
         });
 
-        map1.sync(map2, {
-            syncCursor: true
-        });
-        map2.sync(map1);
+        map1.sync(map2, {'noInitialSync': false, 'syncCursor':true, 'syncCursorMarker': L.circleMarker([0,0], {radius:10, fillOpacity: 0.6, color: '#FF0000', fillColor: '#FFFFFF', className: 'noCursor'})});
+       map2.sync(map1, {'noInitialSync': false, 'syncCursor':true, 'syncCursorMarker': L.circleMarker([0,0], {radius:15, fillOpacity: 0.6, color: '#FFF48D', fillColor: '#FFFFFF', className: 'noCursor'})});
+       window.setTimeout(function(){
+        map2.unsync(map1);
+       }, 5000)
 
     </script>
 </body>
