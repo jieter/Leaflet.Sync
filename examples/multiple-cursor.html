@@ -54,12 +54,13 @@
             zoomControl: false
         });
 
-         map.sync(mapA,{'syncCursor':true, 'syncCursorMarker': L.circleMarker([0,0], {radius:10, fillOpacity: 0.6, color: '#FF0000', fillColor: '#FFFFFF', className: 'noCursor'})});
-        map.sync(mapB,{'syncCursor':true, 'syncCursorMarker': L.circleMarker([0,0], {radius:10, fillOpacity: 0.6, color: '#FF0000', fillColor: '#FFFFFF', className: 'noCursor'})});
+        map.sync(mapA, {
+            syncCursor: true
+        });
+        map.sync(mapB, {
+            syncCursor: true
+        });
 
-        window.setTimeout(function(){
-        map.unsync(mapA);
-       }, 5000)
         // If you want interaction with mapA|B to be synchronized on map,
         // add other links as well.
         // mapA.sync(map);
