@@ -62,7 +62,7 @@
                     if (map === synced) {
                         self._syncMaps.splice(id, 1);
                         //remove the cursors if they belong to the map
-                        self._cursors.forEach(function (cursor){
+                        self._cursors.forEach(function (cursor) {
                             if (map.hasLayer(cursor)) {
                                 map.removeLayer(cursor);
                             }
