@@ -2,12 +2,12 @@
   "rules": {
     "camelcase": 2,
     "quotes": [2, "single", "avoid-escape"],
-    "no-mixed-spaces-and-tabs": [2, "smart-tabs"],
+    "indent": "error",
     "space-before-function-paren": 2,
     "space-in-parens": 2,
     "object-curly-spacing": 2,
     "space-before-blocks": 2,
-    "space-after-keywords": 2,
+    "keyword-spacing": 2,
     "no-lonely-if": 2,
     "comma-style": 2,
     "no-underscore-dangle": 0,
@@ -19,9 +19,16 @@
     "no-console": 0
   },
   "globals": {
-      "L": true,
-      "module": true,
-      "define": true
+    "L": true,
+    "module": true,
+    "define": true
+  },
+  "plugins": [
+    "html"
+  ],
+  "settings": {
+    "html/report-bad-indent": 2,
+    "html/indent": "space"
   },
   "env": {
     "browser": false,
