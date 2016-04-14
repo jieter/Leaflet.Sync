@@ -8,7 +8,8 @@
   },
   "scripts": {
     "lint": "eslint L.Map.Sync.js examples/* test/*",
-    "test": "npm run lint && mocha-phantomjs test/index.html",
+    "spec": "phantomjs ./node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js test/index.html",
+    "test": "npm run lint && npm run spec",
     "release": "mversion patch -m"
   },
   "repository": {
@@ -27,8 +28,9 @@
     "eslint": "^2.7.0",
     "eslint-plugin-html": "^1.4.0",
     "leaflet": "~0.7.7",
-    "mocha": "^2.1.0",
-    "mocha-phantomjs": "^4.0.1",
+    "mocha": "^2.4.5",
+    "mocha-phantomjs-core": "^2.0.1",
+    "phantomjs-prebuilt": "^2.1.4",
     "mversion": "^1.10.0"
   },
   "author": "Bjorn Sandvik",
