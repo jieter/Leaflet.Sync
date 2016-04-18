@@ -61,11 +61,7 @@ describe('L.Sync', function () {
 			a = makeMap(a, 'mapA');
 			b = makeMap(b, 'mapB');
 
-			a.sync(b, {syncCursor:true});
-		});
-
-		it('adds a cursor to the synced map', function () {
-			b.hasLayer(a._cursors[0]);
+			a.sync(b);
 		});
 
 		it('has correct inital view', function () {
