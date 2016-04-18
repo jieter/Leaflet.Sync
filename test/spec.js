@@ -52,6 +52,8 @@ function makeMap (map, id) {
 }
 
 describe('L.Sync', function () {
+    this.timeout(5000);
+
     chai.should();
 
     var a, b, c;
