@@ -46,7 +46,7 @@ Replays all interaction on `mapA` on `mapB` to keep their views synchronized. In
 Optional `options`:
 ```JavaScript
 {
-	noInitialSync: true, // disables initial synchronization of the maps.
+  noInitialSync: true, // disables initial synchronization of the maps.
   addCricleMarker: true // add a circle marker on the synced map
 }
 ```
