@@ -2,21 +2,22 @@
   "rules": {
     "camelcase": 2,
     "quotes": [2, "single", "avoid-escape"],
-    "indent": "error",
+    "indent": 2,
     "space-before-function-paren": 2,
     "space-in-parens": 2,
     "object-curly-spacing": 2,
     "space-before-blocks": 2,
     "keyword-spacing": 2,
     "no-lonely-if": 2,
+    "comma-spacing": [2, {"after": true}],
     "comma-style": 2,
     "no-underscore-dangle": 0,
     "no-constant-condition": 0,
-    "no-multi-spaces": 0,
+    "no-multi-spaces": 2,
     "strict": 0,
-    "key-spacing": 0,
+    "key-spacing": 2,
     "no-shadow": 0,
-    "no-console": 0
+    "no-console": 2,
   },
   "globals": {
     "L": true,
@@ -29,8 +30,5 @@
   "settings": {
     "html/report-bad-indent": 2,
     "html/indent": "space"
-  },
-  "env": {
-    "browser": false,
   }
 }

@@ -3,9 +3,7 @@
  */
 
 (function () {
-    'use strict';
-
-    var NO_ANIMATION =  {
+    var NO_ANIMATION = {
         animate: false,
         reset: true
     };

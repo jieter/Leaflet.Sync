@@ -24,8 +24,8 @@
   ],
   "devDependencies": {
     "chai": "~3.5.0",
-    "chai-leaflet": "0.0.11",
-    "eslint": "^2.7.0",
+    "chai-leaflet": "0.0.12",
+    "eslint": "^2.10.2",
     "eslint-plugin-html": "^1.4.0",
     "leaflet": "~1.0.0-rc.1",
     "mocha": "^2.4.5",
