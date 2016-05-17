@@ -21,6 +21,16 @@
             }
 
             if (!options.noInitialSync) {
+                if (options.addCircleMarker) {
+                    map.cursor = L.circleMarker([0,0], {radius:25, fillOpacity: 0.3, weight:2, color: '#da291c', fillColor: '#FFFFFF'});
+                    map.cursor.addTo(map);
+                    this.on('mousemove', function (e) {
+                        map.cursor.setLatLng(e.latlng);
+                        if ('undefined' != typeof this.cursor) {
+                            this.cursor.setLatLng(e.latlng);
+                        }  
+                    });
+                }
                 map.setView(this.getCenter(), this.getZoom(), NO_ANIMATION);
             }
             return this;
@@ -34,6 +44,9 @@
                 this._syncMaps.forEach(function (synced, id) {
                     if (map === synced) {
                         self._syncMaps.splice(id, 1);
+                        if ('undefined' != typeof map.cursor) {
+                            map.cursor.removeFrom(map);
+                        }
                     }
                 });
             }
