@@ -60,16 +60,16 @@
             zoomControl: false
         });
 
-        map.sync(mapA, {addCircleMarker: true});
-        map.sync(mapB, {addCircleMarker: true});
+        map.sync(mapA, {syncCursor: true});
+        map.sync(mapB, {syncCursor: true});
 
         // If you want interaction with mapA|B to be synchronized on map,
         // add other links as well.
-        mapA.sync(map, {addCircleMarker: true});
-        mapA.sync(mapB, {addCircleMarker: true});
+        mapA.sync(map, {syncCursor: true});
+        mapA.sync(mapB, {syncCursor: true});
 
-        mapB.sync(map, {addCircleMarker: true});
-        mapB.sync(mapA, {addCircleMarker: true});
+        mapB.sync(map, {syncCursor: true});
+        mapB.sync(mapA, {syncCursor: true});
     </script>
 </body>
 </html>

@@ -43,8 +43,8 @@
             zoomControl: false
         });
 
-        map1.sync(map2, {addCircleMarker: true});
-        map2.sync(map1, {addCircleMarker: true});
+        map1.sync(map2, {syncCursor: true});
+        map2.sync(map1, {syncCursor: true});
 
     </script>
 </body>
