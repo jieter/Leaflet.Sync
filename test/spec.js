@@ -1,7 +1,7 @@
 'use strict';
 
 var NO_ANIMATE = {animate: false};
-var ADD_CIRCLE =  {
+var ADD_CIRCLE = {
     syncCursor: true,
     attributionControl: false
 };

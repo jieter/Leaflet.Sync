@@ -23,10 +23,10 @@
             if (!options.noInitialSync) {
                 if (options.syncCursor) {
                     map.cursor = L.circleMarker([0,0], {
-                        radius:25, 
-                        fillOpacity: 0.3, 
-                        weight:2, 
-                        color: '#da291c', 
+                        radius:25,
+                        fillOpacity: 0.3,
+                        weight:2,
+                        color: '#da291c',
                         fillColor: '#FFFFFF'
                     });
                     map.cursor.addTo(map);
