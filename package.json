@@ -34,5 +34,6 @@
     "mversion": "^1.10.0"
   },
   "author": "Bjorn Sandvik",
+  "contributors": [{"name":"Bails Pierre", "email":"bails@getredbird.com"}],
   "readmeFilename": "README.md"
 }

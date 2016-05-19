@@ -1,6 +1,10 @@
 'use strict';
 
 var NO_ANIMATE = {animate: false};
+var ADD_CIRCLE = {
+    syncCursor: true,
+    attributionControl: false
+};
 
 // Generate coords for a square-wave pattern (m=2) or
 // a saw tooth with (m - 1) steps
@@ -29,14 +33,19 @@ var crossedRect = function (a, b) {
 };
 
 // make a map, while destroying it if it exists
-function makeMap (map, id) {
+function makeMap (map, id, option) {
     if (map) {
         map.remove();
     }
 
-    map = L.map(id, {
-        attributionControl: false
-    });
+    if (!option) {
+        map = L.map(id, {
+            attributionControl: false
+        });
+    }
+    else {
+        map = L.map(id, option);
+    }
 
     map.setView([0, 0], 5);
 
@@ -278,6 +287,37 @@ describe('L.Sync', function () {
             a.unsync(b);
 
             a._syncMaps.should.eql([]);
+        });
+    });
+    
+    describe('sync with circle marker', function () {
+        beforeEach(function () {
+            a = makeMap(a, 'mapA', ADD_CIRCLE);
+            b = makeMap(b, 'mapB', ADD_CIRCLE);
+            a.setView([1, 2], 3, NO_ANIMATE);
+            b.setView([0, 0], 5, NO_ANIMATE);
+        });
+
+        it('sync initial view by default', function () {
+            a.should.have.view([1, 2], 3);
+            b.should.have.view([0, 0], 5);
+
+            a.sync(b);
+
+            a.should.have.view([1, 2], 3);
+            b.should.have.view([1, 2], 3);
+        });
+
+        it('does not sync initially when disabled', function () {
+            a.should.have.view([1, 2], 3);
+            b.should.have.view([0, 0], 5);
+
+            a.sync(b, {
+                noInitialSync: true
+            });
+
+            a.should.have.view([1, 2], 3);
+            b.should.have.view([0, 0], 5);
         });
     });
 });
