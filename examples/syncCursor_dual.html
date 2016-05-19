@@ -46,6 +46,12 @@
         map1.sync(map2, {syncCursor: true});
         map2.sync(map1, {syncCursor: true});
 
+        // unsync after 5s.
+        setTimeout(function () {
+            map1.unsync(map2);
+            map2.unsync(map1);
+        }, 5000);
+
     </script>
 </body>
 </html>

@@ -33,23 +33,27 @@
             if (options.syncCursor) {
                 map.cursor = L.circleMarker([0, 0], options.syncCursorMarkerOptions).addTo(map);
 
-                var cursors = this._cursors;
-                cursors.push(map.cursor);
+                this._cursors.push(map.cursor);
 
-                this.on('mousemove', function (e) {
-                    cursors.forEach(function (cursor) {
-                        cursor.setLatLng(e.latlng);
-                    });
-                });
-                this.on('mouseout', function (e) {
-                    cursors.forEach(function (cursor) {
-                        // TODO: hide cursor in stead of moving to 0, 0
-                        cursor.setLatLng([0, 0]);
-                    });
-                });
+                this.on('mousemove', this._cursorSyncMove, this);
+                this.on('mouseout', this._cursorSyncOut, this);
             }
             return this;
         },
+
+        _cursorSyncMove: function (e) {
+            this._cursors.forEach(function (cursor) {
+                cursor.setLatLng(e.latlng);
+            });
+        },
+
+        _cursorSyncOut: function (e) {
+            this._cursors.forEach(function (cursor) {
+                // TODO: hide cursor in stead of moving to 0, 0
+                cursor.setLatLng([0, 0]);
+            });
+        },
+
 
         // unsync maps from each other
         unsync: function (map) {
@@ -65,6 +69,8 @@
                     }
                 });
             }
+            this.off('mousemove', this._cursorSyncMove, this);
+            this.off('mouseout', this._cursorSyncOut, this);
 
             return this;
         },
