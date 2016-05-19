@@ -11,7 +11,16 @@
     L.Map = L.Map.extend({
         sync: function (map, options) {
             this._initSync();
-            options = options || {};
+            options = L.extend({
+                noInitialSync: false,
+                syncCursor: false,
+                syncCursorMarkerOptions: {
+                    radius: 10,
+                    fillOpacity: 0.3,
+                    color: '#da291c',
+                    fillColor: '#fff'
+                }
+            }, options);
 
             // prevent double-syncing the map:
             if (this._syncMaps.indexOf(map) === -1) {
@@ -19,23 +28,25 @@
             }
 
             if (!options.noInitialSync) {
-                if (options.syncCursor) {
-                    map.cursor = L.circleMarker([0, 0], {
-                        radius: 25,
-                        fillOpacity: 0.3,
-                        weight: 2,
-                        color: '#da291c',
-                        fillColor: '#FFFFFF'
-                    });
-                    map.cursor.addTo(map);
-                    this.on('mousemove', function (e) {
-                        map.cursor.setLatLng(e.latlng);
-                        if ('undefined' !== typeof this.cursor) {
-                            this.cursor.setLatLng(e.latlng);
-                        }  
-                    });
-                }
                 map.setView(this.getCenter(), this.getZoom(), NO_ANIMATION);
+            }
+            if (options.syncCursor) {
+                map.cursor = L.circleMarker([0, 0], options.syncCursorMarkerOptions).addTo(map);
+
+                var cursors = this._cursors;
+                cursors.push(map.cursor);
+
+                this.on('mousemove', function (e) {
+                    cursors.forEach(function (cursor) {
+                        cursor.setLatLng(e.latlng);
+                    });
+                });
+                this.on('mouseout', function (e) {
+                    cursors.forEach(function (cursor) {
+                        // TODO: hide cursor in stead of moving to 0, 0
+                        cursor.setLatLng([0, 0]);
+                    });
+                });
             }
             return this;
         },
@@ -48,7 +59,7 @@
                 this._syncMaps.forEach(function (synced, id) {
                     if (map === synced) {
                         self._syncMaps.splice(id, 1);
-                        if ('undefined' !== typeof map.cursor) {
+                        if (map.cursor) {
                             map.cursor.removeFrom(map);
                         }
                     }
@@ -71,6 +82,7 @@
             var originalMap = this;
 
             this._syncMaps = [];
+            this._cursors = [];
 
             L.extend(originalMap, {
                 setView: function (center, zoom, options, sync) {
