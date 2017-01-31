@@ -1,6 +1,6 @@
 {
   "name": "leaflet.sync",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Sync two or more Leaflet map instances",
   "main": "L.Map.Sync.js",
   "directories": {
@@ -34,6 +34,11 @@
     "mversion": "^1.10.0"
   },
   "author": "Bjorn Sandvik",
-  "contributors": [{"name":"Bails Pierre", "email":"bails@getredbird.com"}],
+  "contributors": [
+    {
+      "name": "Bails Pierre",
+      "email": "bails@getredbird.com"
+    }
+  ],
   "readmeFilename": "README.md"
 }
