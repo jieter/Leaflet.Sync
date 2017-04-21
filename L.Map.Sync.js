@@ -125,7 +125,7 @@
                 });
             }, this);
 
-            originalMap.on('dragend', function(){
+            originalMap.on('dragend', function () {
                 originalMap._syncMaps.forEach(function (toSync) {
                     toSync.fire('moveend');
                 });
