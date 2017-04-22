@@ -125,6 +125,12 @@
                 });
             }, this);
 
+            originalMap.on('dragend', function () {
+                originalMap._syncMaps.forEach(function (toSync) {
+                    toSync.fire('moveend');
+                });
+            });
+
             originalMap.dragging._draggable._updatePosition = function () {
                 L.Draggable.prototype._updatePosition.call(this);
                 var self = this;
@@ -135,7 +141,7 @@
                             layer._google.setCenter(originalMap.getCenter());
                         }
                     });
-                    toSync.fire('moveend');
+                    toSync.fire('move');
                 });
             };
         }
