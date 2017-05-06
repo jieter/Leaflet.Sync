@@ -51,11 +51,11 @@
         // Helper function to compute the offset easily
         // The arguments are relative positions respect refence and target maps
         // of the point to sync.
-        // If you provide or=[0,1], ot=[1,0] will sync
-        // the bottom left corner of the ref map
+        // If you provide ratioRef=[0,1], ratioTgt=[1,0] will sync
+        // the bottom left corner of the reference map
         // with the top right corner of the target map.
         // The values can be less than 0 or greater than 1. It will sync
-        // point out of the map.
+        // points out of the map.
         offsetHelper: function (ratioRef, ratioTgt) {
             var or = L.Util.isArray(ratioRef) ? ratioRef : [0.5, 0.5]
             var ot = L.Util.isArray(ratioTgt) ? ratioTgt : [0.5, 0.5]
