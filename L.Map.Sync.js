@@ -152,7 +152,7 @@
             });
 
             originalMap.on('zoomend', function () {
-                // reset the map, and let setView synchorize the others.
+                // reset the map, and let setView synchronize the others.
                 originalMap.setView(originalMap.getCenter(), originalMap.getZoom(), NO_ANIMATION);
             }, this);
 
@@ -163,7 +163,7 @@
             });
 
             originalMap.on('resize', function (e) {
-                // reset the map, and let setView synchorize the others.
+                // reset the map, and let setView synchronize the others.
                 originalMap.setView(originalMap.getCenter(), originalMap.getZoom(), NO_ANIMATION);
             });
 
