@@ -36,6 +36,21 @@ mapB.sync(mapC);
 mapC.sync(mapA);
 mapC.sync(mapB);
 ```
+## Offset
+You can synchronize not only the centers, but other points, using the option `offsetFn`.
+The parameters send to the function are `(center, zoom, referenceMap, targetMap)`, and it must return the equivalent center to produce your offset. That means, the center to pass to setView.
+
+In most cases, you can use the factory `offsetHelper`, that accepts two arrays of two elements each `(ratioRef, ratioTgt)`. The meaning of this array is the relative position -relative to the top left corner and the whole size- in the map container of the point to synchronize. (1 is for the whole width or height). Values greater than 1 or less than 0 work fine.
+
+For instance `mapB.sync(mapC, {offsetFn: L.Map.prototype.offsetHelper([0, 1], [1, 1])});` will sync the bottom left corner `[0, 1]` in the reference map (mapB) with the bottom right corner `[1, 1]` in the target map (mapC).
+
+As well `mapB.sync(mapA, {offsetFn: mapB.offsetHelper([0, 0], [1, 0.5])});` will sync the top left corner `[0 ,0]` in mapB with the center of the right side `[1, 0.5]` in mapA.
+
+If you want the actions to be synced vice-versa, you should use simetric values (as reference and target are swapped).
+
+The default behaviour uses `[0.5, 0.5], [0.5, 0.5]`, that synchronizes the centers.
+
+Have a look at the file examples/multiple_offset.html to see how to sync multiple maps with offsets.
 
 API
 ---
@@ -47,7 +62,8 @@ Optional `options`:
 ```JavaScript
 {
     noInitialSync: true, // disables initial synchronization of the maps.
-    syncCursor: true // add a circle marker on the synced map
+    syncCursor: true, // add a circle marker on the synced map
+    offsetFn: function (center, zoom, refMap, tgtMap) { return center; } // function to compute an offset for the center
 }
 ```
 
