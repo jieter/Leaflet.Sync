@@ -50,7 +50,7 @@ If you want the actions to be synced vice-versa, you should use simetric values 
 
 The default behaviour uses `[0.5, 0.5], [0.5, 0.5]`, that synchronizes the centers.
 
-Have a look at the file examples/multiple_offset.html to see how to sync multiple maps with offsets.
+Have a look at the file [examples/multiple_offset.html](examples/multiple_offset.html) to see how to sync multiple maps with offsets.
 
 API
 ---
