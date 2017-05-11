@@ -174,7 +174,6 @@
                     L.DomUtil.setPosition(toSync.dragging._draggable._element, self._newPos);
                     toSync.eachLayer(function (layer) {
                         if (layer._google !== undefined) {
-                            layer._google.setCenter(originalMap.getCenter());
                             layer._google.setCenter(
                                 originalMap._syncOffsetFns[L.Util.stamp(toSync)](originalMap.getCenter(),
                                              originalMap.getZoom(), originalMap, toSync));
