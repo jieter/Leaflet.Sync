@@ -73,6 +73,7 @@ mapA.sync(mapB, {offsetFn: function (center, zoom, refMap, tgtMap) {
     }
 });
 ```
+![offset animation](offset_animation.gif)
 
 API
 ---
