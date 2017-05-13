@@ -40,17 +40,39 @@ mapC.sync(mapB);
 You can synchronize not only the centers, but other points, using the option `offsetFn`.
 The parameters send to the function are `(center, zoom, referenceMap, targetMap)`, and it must return the equivalent center to produce your offset. That means, the center to pass to setView.
 
-In most cases, you can use the factory `offsetHelper`, that accepts two arrays of two elements each `(ratioRef, ratioTgt)`. The meaning of this array is the relative position -relative to the top left corner and the whole size- in the map container of the point to synchronize. (1 is for the whole width or height). Values greater than 1 or less than 0 work fine.
+In most cases, you can use the factory `L.Util.offsetHelper`, that accepts two arrays of two elements each `(ratioRef, ratioTgt)`. The meaning of this array is the relative position -relative to the top left corner and the whole size- in the map container of the point to synchronize. The first value in the array is for the x axis, where 0 is the left side and 1 the right side. The second value in the array is for the y axis, where 0 is the top side, and 1 the bottom side. So `[0, 0]` is the top left corner, `[0, 1]` is the bottom left corner, `[0.5, 1]` is the middle of the bottom side, `[0.5, 0.5]` is the center of the container, `[0.75, 0.25]` is the center of the top right quadrant, and `[2, 0]` is a point out of the container, one 'width' far to the right, in the top line.
+```
+ [0,0]------[0.5,0]------[1,0]     ...       [2,0]
+   |                       |
+ [0,0.5]---[0.5,0.5]----[1,0.5]
+   |                       |
+ [0,1]------[0.5,1]------[1,1]
+ 
+```
 
-For instance `mapB.sync(mapC, {offsetFn: L.Map.prototype.offsetHelper([0, 1], [1, 1])});` will sync the bottom left corner `[0, 1]` in the reference map (mapB) with the bottom right corner `[1, 1]` in the target map (mapC).
+For instance `mapB.sync(mapC, {offsetFn: L.Util.offsetHelper([0, 1], [1, 1])});` will sync the bottom left corner `[0, 1]` in the reference map (mapB) with the bottom right corner `[1, 1]` in the target map (mapC).
 
-As well `mapB.sync(mapA, {offsetFn: mapB.offsetHelper([0, 0], [1, 0.5])});` will sync the top left corner `[0 ,0]` in mapB with the center of the right side `[1, 0.5]` in mapA.
+As well `mapB.sync(mapA, {offsetFn: L.Util.offsetHelper([0, 0], [1, 0.5])});` will sync the top left corner `[0 ,0]` in mapB with the center of the right side `[1, 0.5]` in mapA.
 
-If you want the actions to be synced vice-versa, you should use simetric values (as reference and target are swapped).
+If you want the actions to be synced vice-versa, you should use symmetric values (as reference and target are swapped); for instance:
+```JavaScript
+// place B below A, and show a continuous map
+mapA.sync(mapB, {offsetFn: L.Util.offsetHelper([0, 1], [0, 0])});
+mapB.sync(mapA, {offsetFn: L.Util.offsetHelper([0, 0], [0, 1])});
+```
 
-The default behaviour uses `[0.5, 0.5], [0.5, 0.5]`, that synchronizes the centers.
+The default behaviour is to synchronize the centers, the corresponding offset points are  `[0.5, 0.5], [0.5, 0.5]`.
 
 Have a look at the file [examples/multiple_offset.html](examples/multiple_offset.html) to see how to sync multiple maps with offsets.
+
+If you need a different behaviour not supported by `L.Util.offsetHelper`, create your own function. For instance, if you have a banner on the left side of mapA 100px width that you want to exclude, you can create something like this:
+```JavaScript
+mapA.sync(mapB, {offsetFn: function (center, zoom, refMap, tgtMap) {                        
+    var pt = refMap.project(center, zoom).add([100, 0]);  
+    return refMap.unproject(pt, zoom);
+    }
+});
+```
 
 API
 ---
