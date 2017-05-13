@@ -395,7 +395,7 @@ describe('L.Sync', function () {
                 a = makeMap(a, 'mapA');
                 b = makeMap(b, 'mapB');
 
-                a.sync(b, {offsetFn: L.Map.prototype.offsetHelper([1, 0], [0, 0])});
+                a.sync(b, {offsetFn: L.Util.offsetHelper([1, 0], [0, 0])});
             });
 
             it('has correct inital view', function () {
@@ -450,7 +450,7 @@ describe('L.Sync', function () {
                 a = makeMap(a, 'mapA');
                 b = makeMap(b, 'mapB');
 
-                a.sync(b, {offsetFn: L.Map.prototype.offsetHelper([0, 0], [0, 1])});
+                a.sync(b, {offsetFn: L.Util.offsetHelper([0, 0], [0, 1])});
             });
 
             it('has correct inital view', function () {
@@ -514,7 +514,7 @@ describe('L.Sync', function () {
                 a.should.have.view([1, 2], 3);
                 b.should.have.view([3, 4], 5);
 
-                a.sync(b, {offsetFn: L.Map.prototype.offsetHelper([1, 0], [0, 1])});
+                a.sync(b, {offsetFn: L.Util.offsetHelper([1, 0], [0, 1])});
                 a.should.have.view([1, 2], 3);
                 b.should.have.view([33.97094, 37.15625], 3);
             });
@@ -531,8 +531,8 @@ describe('L.Sync', function () {
                 a.should.have.view([1, 2], 3);
                 b.should.have.view([0, 0], 5);
 
-                a.sync(b, {offsetFn: L.Map.prototype.offsetHelper([1, 0], [0, 1])});
-                b.sync(a, {offsetFn: L.Map.prototype.offsetHelper([0, 1], [1, 0])});
+                a.sync(b, {offsetFn: L.Util.offsetHelper([1, 0], [0, 1])});
+                b.sync(a, {offsetFn: L.Util.offsetHelper([0, 1], [1, 0])});
                 a._syncMaps.should.have.length(1);
                 Object.keys(a._syncOffsetFns).should.have.length(1);
                 b._syncMaps.should.have.length(1);
@@ -548,10 +548,10 @@ describe('L.Sync', function () {
                 a = makeMap(a, 'mapA');
                 b = makeMap(b, 'mapB');
                 c = makeMap(c, 'mapC');
-                a.sync(b, {offsetFn: L.Map.prototype.offsetHelper([1, 0], [0, 0])});
-                b.sync(a, {offsetFn: L.Map.prototype.offsetHelper([0, 0], [1, 0])});
-                a.sync(c, {offsetFn: L.Map.prototype.offsetHelper([1, 1], [0, 0])});
-                c.sync(a, {offsetFn: L.Map.prototype.offsetHelper([0, 0], [1, 1])});
+                a.sync(b, {offsetFn: L.Util.offsetHelper([1, 0], [0, 0])});
+                b.sync(a, {offsetFn: L.Util.offsetHelper([0, 0], [1, 0])});
+                a.sync(c, {offsetFn: L.Util.offsetHelper([1, 1], [0, 0])});
+                c.sync(a, {offsetFn: L.Util.offsetHelper([0, 0], [1, 1])});
             });
 
             /**
@@ -588,8 +588,8 @@ describe('L.Sync', function () {
                 a = makeMap(a, 'mapA');
                 b = makeMap(b, 'mapB');
                 c = makeMap(c, 'mapC');
-                a.sync(b, {offsetFn: L.Map.prototype.offsetHelper([1, 0], [0, 0])});
-                a.sync(c, {offsetFn: L.Map.prototype.offsetHelper([2, 0], [0, 0])});
+                a.sync(b, {offsetFn: L.Util.offsetHelper([1, 0], [0, 0])});
+                a.sync(c, {offsetFn: L.Util.offsetHelper([2, 0], [0, 0])});
             });
 
             it('syncs', function () {

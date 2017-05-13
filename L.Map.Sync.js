@@ -8,6 +8,28 @@
         reset: true
     };
 
+    // Helper function to compute the offset easily
+    // The arguments are relative positions respect refence and target maps
+    // of the point to sync.
+    // If you provide ratioRef=[0,1], ratioTgt=[1,0] will sync
+    // the bottom left corner of the reference map
+    // with the top right corner of the target map.
+    // The values can be less than 0 or greater than 1. It will sync
+    // points out of the map.
+    L.Util.offsetHelper = function (ratioRef, ratioTgt) {
+        var or = L.Util.isArray(ratioRef) ? ratioRef : [0.5, 0.5]
+        var ot = L.Util.isArray(ratioTgt) ? ratioTgt : [0.5, 0.5]
+        return function (center, zoom, refMap, tgtMap) {
+            var rs = refMap.getSize();
+            var ts = tgtMap.getSize();
+            var pt = refMap.project(center, zoom)
+                           .subtract([(0.5 - or[0]) * rs.x, (0.5 - or[1]) * rs.y])
+                           .add([(0.5 - ot[0]) * ts.x, (0.5 - ot[1]) * ts.y]);
+            return refMap.unproject(pt, zoom);
+        };
+    };
+
+
     L.Map = L.Map.extend({
         sync: function (map, options) {
             this._initSync();
@@ -46,27 +68,6 @@
                 this.on('mouseout', this._cursorSyncOut, this);
             }
             return this;
-        },
-
-        // Helper function to compute the offset easily
-        // The arguments are relative positions respect refence and target maps
-        // of the point to sync.
-        // If you provide ratioRef=[0,1], ratioTgt=[1,0] will sync
-        // the bottom left corner of the reference map
-        // with the top right corner of the target map.
-        // The values can be less than 0 or greater than 1. It will sync
-        // points out of the map.
-        offsetHelper: function (ratioRef, ratioTgt) {
-            var or = L.Util.isArray(ratioRef) ? ratioRef : [0.5, 0.5]
-            var ot = L.Util.isArray(ratioTgt) ? ratioTgt : [0.5, 0.5]
-            return function (center, zoom, refMap, tgtMap) {
-                var rs = refMap.getSize();
-                var ts = tgtMap.getSize();
-                var pt = refMap.project(center, zoom)
-                               .subtract([(0.5-or[0])*rs.x, (0.5-or[1])*rs.y])
-                               .add([(0.5-ot[0])*ts.x, (0.5-ot[1])*ts.y]);
-                return refMap.unproject(pt, zoom);
-            };
         },
 
         _cursorSyncMove: function (e) {
