@@ -9,8 +9,8 @@
     };
 
     // Helper function to compute the offset easily
-    // The arguments are relative positions respect refence and target maps
-    // of the point to sync.
+    // The arguments are relative positions with respect to reference and
+    // target maps of the point to sync.
     // If you provide ratioRef=[0,1], ratioTgt=[1,0] will sync
     // the bottom left corner of the reference map
     // with the top right corner of the target map.
