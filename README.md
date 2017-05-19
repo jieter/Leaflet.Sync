@@ -1,7 +1,7 @@
 Leaflet.Sync
 ============
 
-Synchronized view of two maps. Tested with Leaflet 0.7.7 and 1.0.0-rc.1.
+Synchronized view of two maps. Tested with Leaflet 1.0.3.
 
 [More information in original blog post by @turban](http://blog.thematicmapping.org/2013/06/creating-synchronized-view-of-two-maps.html)
 
@@ -47,7 +47,7 @@ In most cases, you can use the factory `L.Util.offsetHelper`, that accepts two a
  [0,0.5]---[0.5,0.5]----[1,0.5]
    |                       |
  [0,1]------[0.5,1]------[1,1]
- 
+
 ```
 
 For instance `mapB.sync(mapC, {offsetFn: L.Util.offsetHelper([0, 1], [1, 1])});` will sync the bottom left corner `[0, 1]` in the reference map (mapB) with the bottom right corner `[1, 1]` in the target map (mapC).
@@ -67,8 +67,8 @@ Have a look at the file [examples/multiple_offset.html](examples/multiple_offset
 
 If you need a different behaviour not supported by `L.Util.offsetHelper`, create your own function. For instance, if you have a banner on the left side of mapA 100px width that you want to exclude, you can create something like this:
 ```JavaScript
-mapA.sync(mapB, {offsetFn: function (center, zoom, refMap, tgtMap) {                        
-    var pt = refMap.project(center, zoom).add([100, 0]);  
+mapA.sync(mapB, {offsetFn: function (center, zoom, refMap, tgtMap) {
+    var pt = refMap.project(center, zoom).add([100, 0]);
     return refMap.unproject(pt, zoom);
     }
 });
