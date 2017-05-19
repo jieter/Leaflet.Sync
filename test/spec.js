@@ -389,5 +389,215 @@ describe('L.Sync', function () {
         });
     });
 
+    describe('offset', function () {
+        describe('horizonal', function () {
+            beforeEach(function () {
+                a = makeMap(a, 'mapA');
+                b = makeMap(b, 'mapB');
 
+                a.sync(b, {offsetFn: L.Util.offsetHelper([1, 0], [0, 0])});
+            });
+
+            it('has correct inital view', function () {
+                a.should.have.view([0, 0], 5);
+                b.should.have.view([0, 8.78906], 5); // width/(256*2^zoom)*360
+            });
+
+            it('returns correct map instance', function () {
+                a.sync(b).should.equal(a);
+            });
+
+            it('it is only added once', function () {
+                a.sync(b);
+                a.sync(b);
+
+                a._syncMaps.should.have.length(1);
+            });
+
+            describe('setView', function () {
+                it('syncs', function () {
+                    a.setView([1, 2], 3, NO_ANIMATE);
+                    b.should.have.view([1, 37.15625], 3); // 2 + width/(256*2^zoom)*360
+                });
+
+                it('still returns map instance', function () {
+                    a.setView([1, 1], 3, NO_ANIMATE).should.equal(a);
+                });
+            });
+
+            describe('panBy', function () {
+
+                it('syncs', function () {
+                    a.panBy([200, 0], NO_ANIMATE);
+
+                    b.should.have.view([0, 17.57813]);
+
+                    a.panBy([-200, 5], NO_ANIMATE);
+                    b.should.have.view([-0.2197, 8.78906]);
+
+                    a.panBy([0, -5], NO_ANIMATE);
+                    b.should.have.view([0, 8.78906]);
+                });
+
+                it('still returns map instance', function () {
+                    a.panBy([0, 2], NO_ANIMATE).should.equal(a);
+                });
+
+            });
+        });
+        describe('vertical', function () {
+            beforeEach(function () {
+                a = makeMap(a, 'mapA');
+                b = makeMap(b, 'mapB');
+
+                a.sync(b, {offsetFn: L.Util.offsetHelper([0, 0], [0, 1])});
+            });
+
+            it('has correct inital view', function () {
+                var lat = a.unproject([0, (256*(1 << 5)/2)-200], 5).lat;
+                a.should.have.view([0, 0], 5);
+                b.should.have.view([lat, 0], 5);
+            });
+
+            describe('setView', function () {
+                it('syncs', function () {
+                    var p = a.project([1, 2], 3);
+                    p.y -= 200;
+                    var lat = a.unproject(p, 3).lat;
+                    a.setView([1, 2], 3, NO_ANIMATE);
+                    b.should.have.view([lat, 2], 3);
+                });
+            });
+
+            describe('panBy', function () {
+
+                it('syncs', function () {
+                    a.panBy([200, 0], NO_ANIMATE);
+
+                    b.should.have.view([8.75479, 8.78906]);
+
+                    a.panBy([-200, 5], NO_ANIMATE);
+                    b.should.have.view([8.53757, 0]);
+
+                    a.panBy([0, -5], NO_ANIMATE);
+                    b.should.have.view([8.75479, 0]);
+                });
+            });
+        });
+        describe('reSync', function () {
+            beforeEach(function () {
+                a = makeMap(a, 'mapA');
+                b = makeMap(b, 'mapB');
+                a.setView([1, 2], 3, NO_ANIMATE);
+                b.setView([0, 0], 5, NO_ANIMATE);
+            });
+
+            it('sync, unsync and resync', function () {
+                a.should.have.view([1, 2], 3);
+                b.should.have.view([0, 0], 5);
+
+                a.sync(b);
+                a._syncMaps.should.have.length(1);
+                Object.keys(a._syncOffsetFns).should.have.length(1);
+
+                a.should.have.view([1, 2], 3);
+                b.should.have.view([1, 2], 3);
+
+                a.unsync(b);
+                a._syncMaps.should.have.length(0);
+                Object.keys(a._syncOffsetFns).should.have.length(0);
+
+                a.should.have.view([1, 2], 3);
+                b.should.have.view([1, 2], 3);
+
+                b.setView([3, 4], 5, NO_ANIMATE);
+                a.should.have.view([1, 2], 3);
+                b.should.have.view([3, 4], 5);
+
+                a.sync(b, {offsetFn: L.Util.offsetHelper([1, 0], [0, 1])});
+                a.should.have.view([1, 2], 3);
+                b.should.have.view([33.97094, 37.15625], 3);
+            });
+        });
+        describe('A<->B', function () {
+            beforeEach(function () {
+                a = makeMap(a, 'mapA');
+                b = makeMap(b, 'mapB');
+                a.setView([1, 2], 3, NO_ANIMATE);
+                b.setView([0, 0], 5, NO_ANIMATE);
+            });
+
+            it('sync', function () {
+                a.should.have.view([1, 2], 3);
+                b.should.have.view([0, 0], 5);
+
+                a.sync(b, {offsetFn: L.Util.offsetHelper([1, 0], [0, 1])});
+                b.sync(a, {offsetFn: L.Util.offsetHelper([0, 1], [1, 0])});
+                a._syncMaps.should.have.length(1);
+                Object.keys(a._syncOffsetFns).should.have.length(1);
+                b._syncMaps.should.have.length(1);
+                Object.keys(b._syncOffsetFns).should.have.length(1);
+
+                a.should.have.view([1, 2], 3);
+                b.should.have.view([33.97094, 37.15625], 3);
+            });
+        });
+
+        describe('A <-> B, A <-> C', function () {
+            beforeEach(function () {
+                a = makeMap(a, 'mapA');
+                b = makeMap(b, 'mapB');
+                c = makeMap(c, 'mapC');
+                a.sync(b, {offsetFn: L.Util.offsetHelper([1, 0], [0, 0])});
+                b.sync(a, {offsetFn: L.Util.offsetHelper([0, 0], [1, 0])});
+                a.sync(c, {offsetFn: L.Util.offsetHelper([1, 1], [0, 0])});
+                c.sync(a, {offsetFn: L.Util.offsetHelper([0, 0], [1, 1])});
+            });
+
+            /**
+             * Check if isSynced works
+             */
+            it('isSynced', function () {
+                a.isSynced().should.be.true;
+                b.isSynced().should.be.true;
+                c.isSynced().should.be.true;
+
+                a._syncMaps.should.have.length(2);
+                Object.keys(a._syncOffsetFns).should.have.length(2);
+                b._syncMaps.should.have.length(1);
+                Object.keys(b._syncOffsetFns).should.have.length(1);
+                c._syncMaps.should.have.length(1);
+                Object.keys(c._syncOffsetFns).should.have.length(1);
+            });
+
+            it('syncs', function () {
+                a.setView([5, 6], 7, NO_ANIMATE);
+                a.should.have.view([5, 6], 7);
+                b.should.have.view([5, 8.19727], 7);
+                c.should.have.view([2.80797, 8.19727], 7);
+
+                b.setView([3, 4], 5, NO_ANIMATE);
+                b.should.have.view([3, 4], 5);
+                a.should.have.view([3, -4.78906], 5);
+                c.should.have.view([-5.77787, 4], 5);
+            });
+        });
+        describe('A -> B, A -> C', function () {
+            /* parameter greater than 1 */
+            beforeEach(function () {
+                a = makeMap(a, 'mapA');
+                b = makeMap(b, 'mapB');
+                c = makeMap(c, 'mapC');
+                a.sync(b, {offsetFn: L.Util.offsetHelper([1, 0], [0, 0])});
+                a.sync(c, {offsetFn: L.Util.offsetHelper([2, 0], [0, 0])});
+            });
+
+            it('syncs', function () {
+                a.setView([5, 6], 7, NO_ANIMATE);
+                a.should.have.view([5, 6], 7);
+                b.should.have.view([5, 8.19727], 7);
+                c.should.have.view([5, 10.39453], 7);
+            });
+        });
+    });
 });
