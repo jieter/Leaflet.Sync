@@ -131,11 +131,12 @@
                                 zoom, options, true);
                         });
                     }
+                    var viewpreresets = [];
                     if (options && options.disableViewprereset) {
                         // The event viewpreresets does an invalidateAll,
                         // that reloads all the tiles.
                         // That causes an annoying flicker.
-                        var viewpreresets = this._events.viewprereset;
+                        viewpreresets = this._events.viewprereset;
                         this._events.viewprereset = [];
                     }
                     var ret = L.Map.prototype.setView.call(this, center, zoom, options);
