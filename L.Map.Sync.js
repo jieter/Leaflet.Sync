@@ -5,7 +5,8 @@
 (function () {
     var NO_ANIMATION = {
         animate: false,
-        reset: true
+        reset: true,
+        disableViewprereset: true
     };
 
     // Helper function to compute the offset easily
@@ -130,7 +131,20 @@
                                 zoom, options, true);
                         });
                     }
-                    return L.Map.prototype.setView.call(this, center, zoom, options);
+                    var viewpreresets = [];
+                    if (options && options.disableViewprereset) {
+                        // The event viewpreresets does an invalidateAll,
+                        // that reloads all the tiles.
+                        // That causes an annoying flicker.
+                        viewpreresets = this._events.viewprereset;
+                        this._events.viewprereset = [];
+                    }
+                    var ret = L.Map.prototype.setView.call(this, center, zoom, options);
+                    if (options && options.disableViewprereset) {
+                        // restore viewpreresets event to its previous values
+                        this._events.viewprereset = viewpreresets;
+                    }
+                    return ret;
                 },
 
                 panBy: function (offset, options, sync) {
