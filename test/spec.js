@@ -365,7 +365,9 @@ describe('L.Sync', function () {
             });
         });
 
-        it('moveend fired once on dragNdrop', function () {
+        it('moveend fired twice on dragNdrop', function () {
+            // fired on dragstart (due to setView)
+            // and on dragend
             var numberOfMoveend = 0;
             b.on('moveend', function () {
                 numberOfMoveend++;
@@ -373,10 +375,12 @@ describe('L.Sync', function () {
 
             //simulate dragAndDrop
             triggerDragAndDrop('#mapA', '#mapB');
-            numberOfMoveend.should.equal(1);
+            numberOfMoveend.should.equal(2);
         });
 
-        it('move fired once on _updatePosition', function () {
+        it('move fired twice on _updatePosition', function () {
+            // fired on dragstart (due to setView)
+            // and on dragend
             var numberOfMove = 0;
             b.on('move', function () {
                 numberOfMove++;
@@ -385,7 +389,7 @@ describe('L.Sync', function () {
             triggerDragAndDrop('#mapA', '#mapB');
             a.dragging._draggable._updatePosition();
 
-            numberOfMove.should.equal(1);
+            numberOfMove.should.equal(2);
         });
     });
 
