@@ -108,9 +108,9 @@ Optional `options`:
 
 Removes synchronization.
 
-### `mapA.isSynced()`
+### `mapA.isSynced([otherMap])`
 
-Returns true if the map is synchronized with any other map.
+Returns true if the map is synchronized with any other map. When `otherMap` is present, returns true if the map is synchronized exactly with this `otherMap`.
 
 
 Known issues
