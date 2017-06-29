@@ -28,7 +28,7 @@
     "chai-leaflet": "0.0.12",
     "eslint": "^2.10.2",
     "eslint-plugin-html": "^1.4.0",
-    "leaflet": "1.0.3",
+    "leaflet": "^1.1.0",
     "mocha": "^2.4.5",
     "mocha-phantomjs-core": "^2.0.1",
     "phantomjs-prebuilt": "^2.1.4",
