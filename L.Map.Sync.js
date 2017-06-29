@@ -31,7 +31,7 @@
     };
 
 
-    L.Map = L.Map.extend({
+    L.Map.include({
         sync: function (map, options) {
             this._initSync();
             options = L.extend({
@@ -70,8 +70,8 @@
             }
 
             // on these events, we should reset the view on every synced map
-            // dragstart and click are due to inertia
-            this.on('resize zoomend dragstart click', this._selfSetView);
+            // dragstart is due to inertia
+            this.on('resize zoomend dragstart', this._selfSetView);
             return this;
         },
 
@@ -114,7 +114,7 @@
 
             if (!this._syncMaps || this._syncMaps.length == 0) {
                 // no more synced maps, so these events are not needed.
-                this.off('resize zoomend dragstart click', this._selfSetView);
+                this.off('resize zoomend dragstart', this._selfSetView);
             }
 
             return this;
