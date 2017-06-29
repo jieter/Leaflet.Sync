@@ -68,6 +68,10 @@
                 this.on('mousemove', this._cursorSyncMove, this);
                 this.on('mouseout', this._cursorSyncOut, this);
             }
+
+            // on these events, we should reset the view on every synced map
+            // dragstart and click are due to inertia
+            this.on('resize zoomend dragstart click', this._selfSetView);
             return this;
         },
 
@@ -82,6 +86,11 @@
                 // TODO: hide cursor in stead of moving to 0, 0
                 cursor.setLatLng([0, 0]);
             });
+        },
+
+        _selfSetView: function () {
+            // reset the map, and let setView synchronize the others.
+            this.setView(this.getCenter(), this.getZoom(), NO_ANIMATION);
         },
 
 
@@ -103,12 +112,25 @@
             this.off('mousemove', this._cursorSyncMove, this);
             this.off('mouseout', this._cursorSyncOut, this);
 
+            if (!this._syncMaps || this._syncMaps.length == 0) {
+                // no more synced maps, so these events are not needed.
+                this.off('resize zoomend dragstart click', this._selfSetView);
+            }
+
             return this;
         },
 
-        // Checks if the maps is synced with anything
-        isSynced: function () {
-            return (this.hasOwnProperty('_syncMaps') && Object.keys(this._syncMaps).length > 0);
+        // Checks if the map is synced with anything or a specifyc map
+        isSynced: function (otherMap) {
+            var has = (this.hasOwnProperty('_syncMaps') && Object.keys(this._syncMaps).length > 0);
+            if (has && otherMap) {
+                // Look for this specifyc map
+                has = false;
+                this._syncMaps.forEach(function (synced) {
+                    if (otherMap == synced) has = true;
+                });
+            }
+            return has;
         },
 
         // overload methods on originalMap to replay interactions on _syncMaps;
@@ -124,27 +146,38 @@
 
             L.extend(originalMap, {
                 setView: function (center, zoom, options, sync) {
+                    // Use this sandwich to disable and enable viewprereset
+                    // around setView call
+                    function sandwich (obj, fn) {
+                        var viewpreresets = [];
+                        if (options && options.disableViewprereset) {
+                            // The event viewpreresets does an invalidateAll,
+                            // that reloads all the tiles.
+                            // That causes an annoying flicker.
+                            viewpreresets = obj._events.viewprereset;
+                            obj._events.viewprereset = [];
+                        }
+                        var ret = fn(obj);
+                        if (options && options.disableViewprereset) {
+                            // restore viewpreresets event to its previous values
+                            obj._events.viewprereset = viewpreresets;
+                        }
+                        return ret;
+                    }
+
                     if (!sync) {
                         originalMap._syncMaps.forEach(function (toSync) {
-                            toSync.setView(
-                                originalMap._syncOffsetFns[L.Util.stamp(toSync)](center, zoom, originalMap, toSync),
-                                zoom, options, true);
+                            sandwich(toSync, function (obj) {
+                                return toSync.setView(
+                                    originalMap._syncOffsetFns[L.Util.stamp(toSync)](center, zoom, originalMap, toSync),
+                                    zoom, options, true);
+                            });
                         });
                     }
-                    var viewpreresets = [];
-                    if (options && options.disableViewprereset) {
-                        // The event viewpreresets does an invalidateAll,
-                        // that reloads all the tiles.
-                        // That causes an annoying flicker.
-                        viewpreresets = this._events.viewprereset;
-                        this._events.viewprereset = [];
-                    }
-                    var ret = L.Map.prototype.setView.call(this, center, zoom, options);
-                    if (options && options.disableViewprereset) {
-                        // restore viewpreresets event to its previous values
-                        this._events.viewprereset = viewpreresets;
-                    }
-                    return ret;
+
+                    return sandwich(this, function (obj) {
+                        return L.Map.prototype.setView.call(obj, center, zoom, options);
+                    });
                 },
 
                 panBy: function (offset, options, sync) {
@@ -163,23 +196,25 @@
                         });
                     }
                     return L.Map.prototype._onResize.call(this, event);
+                },
+
+                // overload _stop. It is not mandatory, but it is better
+                // stopping the inertia soon, and adjust later just a few pixels
+                _stop: function (sync) {
+                    if (!sync) {
+                        originalMap._syncMaps.forEach(function (toSync) {
+                            toSync._stop(true);
+                        });
+                    }
+                    L.Map.prototype._stop.call(this);
                 }
             });
 
-            originalMap.on('zoomend', function () {
-                // reset the map, and let setView synchronize the others.
-                originalMap.setView(originalMap.getCenter(), originalMap.getZoom(), NO_ANIMATION);
-            }, this);
 
             originalMap.on('dragend', function () {
                 originalMap._syncMaps.forEach(function (toSync) {
                     toSync.fire('moveend');
                 });
-            });
-
-            originalMap.on('resize', function (e) {
-                // reset the map, and let setView synchronize the others.
-                originalMap.setView(originalMap.getCenter(), originalMap.getZoom(), NO_ANIMATION);
             });
 
             originalMap.dragging._draggable._updatePosition = function () {

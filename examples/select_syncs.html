@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Leaflet Sync Demo - with three maps listening. Select what to sync</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
+      integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
+      crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet-src.js"
+      integrity="sha512-WXoSHqw/t26DszhdMhOXOkI7qCiv5QWXhH9R7CgvgZMHz1ImlkVQ3uNsiQKu5wwbbxtPzFXd1hK4tzno2VqhpA=="
+      crossorigin=""></script>
+
+    <style type="text/css">
+        html, body { width: 100%; height: 100%; margin: 0; }
+        #map, #container { width: 50%; height: 100%; }
+        #map { float: left; }
+        #container { float: right; }
+        #container .map { width: 100%; height: 50%; }
+        .button {
+            background-color: white;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id="container">
+        <div id="mapA" class="map"></div>
+        <div id="mapB" class="map"></div>
+    </div>
+
+    <script src="../L.Map.Sync.js"></script>
+
+    <script type="text/javascript">
+        var center = [52.517, 13.388];
+        var zoom = 14;
+
+        var options = {
+            attribution:
+                '<a href="http://openstreetmap.org/copyright">' +
+                '&copy; OpenStreetmap and Contributors</a>',
+            subdomains: 'abc',
+            minZoom: 0,
+            maxZoom: 20
+        };
+
+        var url = '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        var mapA = L.map('mapA', {
+            layers: [L.tileLayer(url, options)],
+            center: center,
+            zoom: zoom,
+            zoomControl: false
+        });
+        var mapB = L.map('mapB', {
+            layers: [L.tileLayer(url, options)],
+            center: center,
+            zoom: zoom,
+            zoomControl: false
+        });
+
+        var map = L.map('map', {
+            layers: [L.tileLayer(url, options)],
+            center: center,
+            zoom: zoom
+        });
+
+        function offsetGlobal (center, zoom, refMap, tgtMap) {
+            var refC = refMap.getContainer();
+            var tgtC = tgtMap.getContainer();
+            var pt = refMap.project(center, zoom)
+                           .subtract([refC.offsetLeft, refC.offsetTop])
+                           .subtract(refMap.getSize().divideBy(2))
+                           .add([tgtC.offsetLeft, tgtC.offsetTop])
+                           .add(tgtMap.getSize().divideBy(2));
+            return refMap.unproject(pt, zoom);
+        }
+
+        var doAll = false;
+        var doA = false;
+        var doB = false;
+
+        var p = location.search;
+        if (p != '') {
+            var params = p.substring(1).split('&');
+            for (var i = 0; i < params.length; i++) {
+                var param = params[i].split('=');
+                switch (param[0]) {
+                case 'all':
+                    doAll = parseInt(param[1]);
+                    break;
+                case 'a':
+                    doA = parseInt(param[1]);
+                    break;
+                case 'b':
+                    doB = parseInt(param[1]);
+                    break;
+                }
+            }
+        }
+
+        var syncControl = L.Control.extend({
+            initialize: function (otherMap, text, options) {
+                this._otherMap = otherMap;
+                this._text = text || 'sync';
+                this.options = L.extend({position: 'topright'}, options);
+            },
+            onAdd: function (map) {
+                var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom button');
+                container.style.color = 'red';
+                container.innerHTML = this._text;
+                var that = this;
+
+                container.onclick = function (e) {
+                    if (map.isSynced(that._otherMap)) {
+                        map.unsync(that._otherMap);
+                        container.style.color = 'red';
+                    } else {
+                        map.sync(that._otherMap, {offsetFn: offsetGlobal});
+                        container.style.color = 'blue';
+                    }
+                };
+                return container;
+            },
+        });
+        var contA0 = new syncControl(map, '<', {position: 'topleft'});
+        mapA.addControl(contA0);
+        var cont0A = new syncControl(mapA, '>', {position: 'topright'});
+        map.addControl(cont0A);
+
+        var contB0 = new syncControl(map, '<', {position: 'bottomleft'});
+        mapB.addControl(contB0);
+        var cont0B = new syncControl(mapB, '>', {position: 'bottomright'});
+        map.addControl(cont0B);
+
+        var contAB = new syncControl(mapB, 'v', {position: 'bottomleft'});
+        mapA.addControl(contAB);
+        var contBA = new syncControl(mapA, '^', {position: 'topleft'});
+        mapB.addControl(contBA);
+
+
+        // If you want interaction with mapA|B to be synchronized on map,
+        // add other links as well
+        // or add ?all=1 to the url.
+        if (doAll || doA) {
+            contA0._container.onclick();
+            cont0A._container.onclick();
+        }
+
+        if (doAll || doB) {
+            contB0._container.onclick();
+            cont0B._container.onclick();
+        }
+
+    </script>
+</body>
+</html>

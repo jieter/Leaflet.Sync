@@ -44,7 +44,7 @@ In most cases, you can use the factory `L.Util.offsetHelper`, that accepts two a
 ```
  [0,0]------[0.5,0]------[1,0]     ...       [2,0]
    |                       |
- [0,0.5]---[0.5,0.5]----[1,0.5]
+ [0,0.5]---[0.5,0.5]---[1,0.5]
    |                       |
  [0,1]------[0.5,1]------[1,1]
 
@@ -73,6 +73,20 @@ mapA.sync(mapB, {offsetFn: function (center, zoom, refMap, tgtMap) {
     }
 });
 ```
+Another example for `offsetFn` is this function, that will sync all the maps as if they were continuous, like in [examples/select_syncs.html](examples/select_syncs.html)
+```JavaScript
+function offsetGlobal (center, zoom, refMap, tgtMap) {                          
+    var refC = refMap.getContainer();                                           
+    var tgtC = tgtMap.getContainer();                                           
+    var pt = refMap.project(center, zoom)                                       
+                   .subtract([refC.offsetLeft, refC.offsetTop])                 
+                   .subtract(refMap.getSize().divideBy(2))                      
+                   .add([tgtC.offsetLeft, tgtC.offsetTop])                      
+                   .add(tgtMap.getSize().divideBy(2));                          
+    return refMap.unproject(pt, zoom);                                          
+}        
+```
+
 ![offset animation](offset_animation.gif)
 
 API
@@ -94,9 +108,9 @@ Optional `options`:
 
 Removes synchronization.
 
-### `mapA.isSynced()`
+### `mapA.isSynced([otherMap])`
 
-Returns true if the map is synchronized with any other map.
+Returns true if the map is synchronized with any other map. When `otherMap` is present, returns true if the map is synchronized exactly with this `otherMap`.
 
 
 Known issues
