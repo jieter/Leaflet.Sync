@@ -17,7 +17,7 @@
     // with the top right corner of the target map.
     // The values can be less than 0 or greater than 1. It will sync
     // points out of the map.
-    L.Util.offsetHelper = function (ratioRef, ratioTgt) {
+    L.offsetHelper = function (ratioRef, ratioTgt) {
         var or = L.Util.isArray(ratioRef) ? ratioRef : [0.5, 0.5]
         var ot = L.Util.isArray(ratioTgt) ? ratioTgt : [0.5, 0.5]
         return function (center, zoom, refMap, tgtMap) {

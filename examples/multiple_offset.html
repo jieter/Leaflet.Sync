@@ -63,8 +63,8 @@
             zoom: 14
         });
 
-        map.sync(mapA, {offsetFn: L.Util.offsetHelper([1, 0], [0, 0])});
-        map.sync(mapB, {offsetFn: L.Util.offsetHelper([1, 1], [0, 1])});
+        map.sync(mapA, {offsetFn: L.offsetHelper([1, 0], [0, 0])});
+        map.sync(mapB, {offsetFn: L.offsetHelper([1, 1], [0, 1])});
 
         var doAll = false;
         var doA = false;
@@ -93,13 +93,13 @@
         // add other links as well
         // or add ?all=1 to the url.
         if (doAll || doA) {
-            mapA.sync(map, {offsetFn: L.Util.offsetHelper([0, 0], [1, 0])});
-            mapA.sync(mapB, {offsetFn: L.Util.offsetHelper([0, 1], [0, 0])});
+            mapA.sync(map, {offsetFn: L.offsetHelper([0, 0], [1, 0])});
+            mapA.sync(mapB, {offsetFn: L.offsetHelper([0, 1], [0, 0])});
         }
 
         if (doAll || doB) {
-            mapB.sync(map, {offsetFn: L.Util.offsetHelper([0, 1], [1, 1])});
-            mapB.sync(mapA, {offsetFn: L.Util.offsetHelper([0, 0], [0, 1])});
+            mapB.sync(map, {offsetFn: L.offsetHelper([0, 1], [1, 1])});
+            mapB.sync(mapA, {offsetFn: L.offsetHelper([0, 0], [0, 1])});
         }
 
     </script>
