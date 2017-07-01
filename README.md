@@ -42,7 +42,7 @@ mapC.sync(mapB);
 You can synchronize not only the centers, but other points, using the option `offsetFn`.
 The parameters send to the function are `(center, zoom, referenceMap, targetMap)`, and it must return the equivalent center to produce your offset. That means, the center to pass to setView.
 
-In most cases, you can use the factory `L.offsetHelper`, that accepts two arrays of two elements each `(ratioRef, ratioTgt)`. The meaning of this array is the relative position -relative to the top left corner and the whole size- in the map container of the point to synchronize. The first value in the array is for the x axis, where 0 is the left side and 1 the right side. The second value in the array is for the y axis, where 0 is the top side, and 1 the bottom side. So `[0, 0]` is the top left corner, `[0, 1]` is the bottom left corner, `[0.5, 1]` is the middle of the bottom side, `[0.5, 0.5]` is the center of the container, `[0.75, 0.25]` is the center of the top right quadrant, and `[2, 0]` is a point out of the container, one 'width' far to the right, in the top line.
+In most cases, you can use the factory `L.Sync.offsetHelper`, that accepts two arrays of two elements each `(ratioRef, ratioTgt)`. The meaning of this array is the relative position -relative to the top left corner and the whole size- in the map container of the point to synchronize. The first value in the array is for the x axis, where 0 is the left side and 1 the right side. The second value in the array is for the y axis, where 0 is the top side, and 1 the bottom side. So `[0, 0]` is the top left corner, `[0, 1]` is the bottom left corner, `[0.5, 1]` is the middle of the bottom side, `[0.5, 0.5]` is the center of the container, `[0.75, 0.25]` is the center of the top right quadrant, and `[2, 0]` is a point out of the container, one 'width' far to the right, in the top line.
 ```
  [0,0]------[0.5,0]------[1,0]     ...       [2,0]
    |                       |
@@ -52,22 +52,22 @@ In most cases, you can use the factory `L.offsetHelper`, that accepts two arrays
 
 ```
 
-For instance `mapB.sync(mapC, {offsetFn: L.offsetHelper([0, 1], [1, 1])});` will sync the bottom left corner `[0, 1]` in the reference map (mapB) with the bottom right corner `[1, 1]` in the target map (mapC).
+For instance `mapB.sync(mapC, {offsetFn: L.Sync.offsetHelper([0, 1], [1, 1])});` will sync the bottom left corner `[0, 1]` in the reference map (mapB) with the bottom right corner `[1, 1]` in the target map (mapC).
 
-As well `mapB.sync(mapA, {offsetFn: L.offsetHelper([0, 0], [1, 0.5])});` will sync the top left corner `[0 ,0]` in mapB with the center of the right side `[1, 0.5]` in mapA.
+As well `mapB.sync(mapA, {offsetFn: L.Sync.offsetHelper([0, 0], [1, 0.5])});` will sync the top left corner `[0 ,0]` in mapB with the center of the right side `[1, 0.5]` in mapA.
 
 If you want the actions to be synced vice-versa, you should use symmetric values (as reference and target are swapped); for instance:
 ```JavaScript
 // place B below A, and show a continuous map
-mapA.sync(mapB, {offsetFn: L.offsetHelper([0, 1], [0, 0])});
-mapB.sync(mapA, {offsetFn: L.offsetHelper([0, 0], [0, 1])});
+mapA.sync(mapB, {offsetFn: L.Sync.offsetHelper([0, 1], [0, 0])});
+mapB.sync(mapA, {offsetFn: L.Sync.offsetHelper([0, 0], [0, 1])});
 ```
 
 The default behaviour is to synchronize the centers, the corresponding offset points are  `[0.5, 0.5], [0.5, 0.5]`.
 
 Have a look at the file [examples/multiple_offset.html](examples/multiple_offset.html) to see how to sync multiple maps with offsets.
 
-If you need a different behaviour not supported by `L.offsetHelper`, create your own function. For instance, if you have a banner on the left side of mapA 100px width that you want to exclude, you can create something like this:
+If you need a different behaviour not supported by `L.Sync.offsetHelper`, create your own function. For instance, if you have a banner on the left side of mapA 100px width that you want to exclude, you can create something like this:
 ```JavaScript
 mapA.sync(mapB, {offsetFn: function (center, zoom, refMap, tgtMap) {
     var pt = refMap.project(center, zoom).add([100, 0]);

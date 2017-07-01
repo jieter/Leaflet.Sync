@@ -9,6 +9,7 @@
         disableViewprereset: true
     };
 
+    L.Sync = function () {};
     // Helper function to compute the offset easily
     // The arguments are relative positions with respect to reference and
     // target maps of the point to sync.
@@ -17,7 +18,7 @@
     // with the top right corner of the target map.
     // The values can be less than 0 or greater than 1. It will sync
     // points out of the map.
-    L.offsetHelper = function (ratioRef, ratioTgt) {
+    L.Sync.offsetHelper = function (ratioRef, ratioTgt) {
         var or = L.Util.isArray(ratioRef) ? ratioRef : [0.5, 0.5]
         var ot = L.Util.isArray(ratioTgt) ? ratioTgt : [0.5, 0.5]
         return function (center, zoom, refMap, tgtMap) {
