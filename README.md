@@ -3,6 +3,8 @@ Leaflet.Sync
 
 Synchronized view of two maps. Tested with Leaflet 1.0.3.
 
+Leaflet.Sync 0.1.2 is the last version supporting Leaflet 1.0.3.
+
 [More information in original blog post by @turban](http://blog.thematicmapping.org/2013/06/creating-synchronized-view-of-two-maps.html)
 
 Installation
@@ -75,16 +77,16 @@ mapA.sync(mapB, {offsetFn: function (center, zoom, refMap, tgtMap) {
 ```
 Another example for `offsetFn` is this function, that will sync all the maps as if they were continuous, like in [examples/select_syncs.html](examples/select_syncs.html)
 ```JavaScript
-function offsetGlobal (center, zoom, refMap, tgtMap) {                          
-    var refC = refMap.getContainer();                                           
-    var tgtC = tgtMap.getContainer();                                           
-    var pt = refMap.project(center, zoom)                                       
-                   .subtract([refC.offsetLeft, refC.offsetTop])                 
-                   .subtract(refMap.getSize().divideBy(2))                      
-                   .add([tgtC.offsetLeft, tgtC.offsetTop])                      
-                   .add(tgtMap.getSize().divideBy(2));                          
-    return refMap.unproject(pt, zoom);                                          
-}        
+function offsetGlobal (center, zoom, refMap, tgtMap) {
+    var refC = refMap.getContainer();
+    var tgtC = tgtMap.getContainer();
+    var pt = refMap.project(center, zoom)
+                   .subtract([refC.offsetLeft, refC.offsetTop])
+                   .subtract(refMap.getSize().divideBy(2))
+                   .add([tgtC.offsetLeft, tgtC.offsetTop])
+                   .add(tgtMap.getSize().divideBy(2));
+    return refMap.unproject(pt, zoom);
+}
 ```
 
 ![offset animation](offset_animation.gif)
