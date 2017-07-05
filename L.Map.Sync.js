@@ -72,26 +72,10 @@
 
             // on these events, we should reset the view on every synced map
             // dragstart is due to inertia
-            this.on('resize zoomend dragstart', this._selfSetView);
+            this.on('resize zoomend', this._selfSetView);
+            this.on('moveend', this._syncOnMoveend);
+            this.on('dragend', this._syncOnDragend);
             return this;
-        },
-
-        _cursorSyncMove: function (e) {
-            this._cursors.forEach(function (cursor) {
-                cursor.setLatLng(e.latlng);
-            });
-        },
-
-        _cursorSyncOut: function (e) {
-            this._cursors.forEach(function (cursor) {
-                // TODO: hide cursor in stead of moving to 0, 0
-                cursor.setLatLng([0, 0]);
-            });
-        },
-
-        _selfSetView: function () {
-            // reset the map, and let setView synchronize the others.
-            this.setView(this.getCenter(), this.getZoom(), NO_ANIMATION);
         },
 
 
@@ -115,7 +99,9 @@
 
             if (!this._syncMaps || this._syncMaps.length == 0) {
                 // no more synced maps, so these events are not needed.
-                this.off('resize zoomend dragstart', this._selfSetView);
+                this.off('resize zoomend', this._selfSetView);
+                this.off('moveend', this._syncOnMoveend);
+                this.off('dragend', this._syncOnDragend);
             }
 
             return this;
@@ -133,6 +119,45 @@
             }
             return has;
         },
+
+
+        // Callbacks for events...
+        _cursorSyncMove: function (e) {
+            this._cursors.forEach(function (cursor) {
+                cursor.setLatLng(e.latlng);
+            });
+        },
+
+        _cursorSyncOut: function (e) {
+            this._cursors.forEach(function (cursor) {
+                // TODO: hide cursor in stead of moving to 0, 0
+                cursor.setLatLng([0, 0]);
+            });
+        },
+
+        _selfSetView: function (e) {
+            // reset the map, and let setView synchronize the others.
+            this.setView(this.getCenter(), this.getZoom(), NO_ANIMATION);
+        },
+
+        _syncOnMoveend: function (e) {
+            if (this._syncDragend) {
+                // This is 'the moveend' after the dragend.
+                // Without inertia, it will be right after,
+                // but when inertia is on, we need this to detect that.
+                this._syncDragend = false; // before calling setView!
+                this._selfSetView(e);
+                this._syncMaps.forEach(function (toSync) {
+                    toSync.fire('moveend');
+                });
+            }
+        },
+
+        _syncOnDragend: function (e) {
+            // It is ugly to have state, but we need it in case of inertia.
+            this._syncDragend = true;
+        },
+
 
         // overload methods on originalMap to replay interactions on _syncMaps;
         _initSync: function () {
@@ -166,6 +191,12 @@
                         return ret;
                     }
 
+                    // Looks better if the other maps 'follow' the active one,
+                    // so call this before _syncMaps
+                    var ret = sandwich(this, function (obj) {
+                        return L.Map.prototype.setView.call(obj, center, zoom, options);
+                    });
+
                     if (!sync) {
                         originalMap._syncMaps.forEach(function (toSync) {
                             sandwich(toSync, function (obj) {
@@ -176,9 +207,7 @@
                         });
                     }
 
-                    return sandwich(this, function (obj) {
-                        return L.Map.prototype.setView.call(obj, center, zoom, options);
-                    });
+                    return ret;
                 },
 
                 panBy: function (offset, options, sync) {
@@ -197,25 +226,7 @@
                         });
                     }
                     return L.Map.prototype._onResize.call(this, event);
-                },
-
-                // overload _stop. It is not mandatory, but it is better
-                // stopping the inertia soon, and adjust later just a few pixels
-                _stop: function (sync) {
-                    if (!sync) {
-                        originalMap._syncMaps.forEach(function (toSync) {
-                            toSync._stop(true);
-                        });
-                    }
-                    L.Map.prototype._stop.call(this);
                 }
-            });
-
-
-            originalMap.on('dragend', function () {
-                originalMap._syncMaps.forEach(function (toSync) {
-                    toSync.fire('moveend');
-                });
             });
 
             originalMap.dragging._draggable._updatePosition = function () {
