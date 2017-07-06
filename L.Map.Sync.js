@@ -226,6 +226,15 @@
                         });
                     }
                     return L.Map.prototype._onResize.call(this, event);
+                },
+
+                _stop: function (sync) {
+                    L.Map.prototype._stop.call(this);
+                    if (!sync) {
+                        originalMap._syncMaps.forEach(function (toSync) {
+                            toSync._stop(true);
+                        });
+                    }
                 }
             });
 
