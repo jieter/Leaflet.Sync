@@ -61,7 +61,9 @@
                     this.getZoom(), NO_ANIMATION);
             }
             if (options.syncCursor) {
-                map.cursor = L.circleMarker([0, 0], options.syncCursorMarkerOptions).addTo(map);
+                if (map.cursor === undefined) {
+                    map.cursor = L.circleMarker([0, 0], options.syncCursorMarkerOptions).addTo(map);
+                }
 
                 this._cursors.push(map.cursor);
 
