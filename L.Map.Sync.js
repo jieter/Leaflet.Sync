@@ -100,23 +100,27 @@
         unsync: function (map) {
             var self = this;
 
+            this._cursors.forEach(function(cursor, indx, _cursors) {
+                if (cursor === map.cursor) {
+                    _cursors.splice(indx, 1)
+                }
+            });
+
             if (this._syncMaps) {
                 this._syncMaps.forEach(function (synced, id) {
                     if (map === synced) {
                         delete self._syncOffsetFns[L.Util.stamp(map)];
                         self._syncMaps.splice(id, 1);
-                        if (map.cursor) {
-                            map.cursor.removeFrom(map);
-                        }
                     }
                 });
             }
-            this.off('mousemove', this._cursorSyncMove, this);
-            this.off('mouseout', this._cursorSyncOut, this);
 
             if (!this._syncMaps || this._syncMaps.length == 0) {
                 // no more synced maps, so these events are not needed.
                 this.off('resize zoomend dragstart click', this._selfSetView);
+
+                this.off('mousemove', this._cursorSyncMove, this);
+                this.off('mouseout', this._cursorSyncOut, this);
             }
 
             return this;
