@@ -106,6 +106,9 @@
                 }
             });
 
+            // TODO: hide cursor in stead of moving to 0, 0
+            map.cursor.setLatLng([0, 0]);
+
             if (this._syncMaps) {
                 this._syncMaps.forEach(function (synced, id) {
                     if (map === synced) {
