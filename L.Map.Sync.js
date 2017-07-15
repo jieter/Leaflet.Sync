@@ -100,14 +100,18 @@
         unsync: function (map) {
             var self = this;
 
-            this._cursors.forEach(function (cursor, indx, _cursors) {
-                if (cursor === map.cursor) {
-                    _cursors.splice(indx, 1)
-                }
-            });
+            if (this._cursors) {
+                this._cursors.forEach(function (cursor, indx, _cursors) {
+                    if (cursor === map.cursor) {
+                        _cursors.splice(indx, 1)
+                    }
+                });
+            }
 
             // TODO: hide cursor in stead of moving to 0, 0
-            map.cursor.setLatLng([0, 0]);
+            if (map.cursor) {
+                map.cursor.setLatLng([0, 0]);
+            }
 
             if (this._syncMaps) {
                 this._syncMaps.forEach(function (synced, id) {
