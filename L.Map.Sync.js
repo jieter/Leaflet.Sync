@@ -100,7 +100,7 @@
         unsync: function (map) {
             var self = this;
 
-            this._cursors.forEach(function(cursor, indx, _cursors) {
+            this._cursors.forEach(function (cursor, indx, _cursors) {
                 if (cursor === map.cursor) {
                     _cursors.splice(indx, 1)
                 }
