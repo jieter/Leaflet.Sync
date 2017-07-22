@@ -11,7 +11,8 @@
     "lint": "eslint L.Map.Sync.js examples/* test/*",
     "spec": "phantomjs ./node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js test/index.html",
     "test": "npm run lint && npm run spec",
-    "release": "mversion patch -m"
+    "release": "mversion patch -m",
+    "release-minor": "mversion minor -m"
   },
   "repository": {
     "type": "git",

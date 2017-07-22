@@ -10,10 +10,6 @@ Installation
 
 Using npm for browserify `npm install leaflet.sync` (and `require('leaflet.sync')`), or just download `L.Map.Sync.js` and add a script tag for it in you html.
 
-What's new ?
------
-Add synchronized cursors between synced maps to compare more accurately.
-
 Usage
 -----
 
