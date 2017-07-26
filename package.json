@@ -25,15 +25,15 @@
     "sync"
   ],
   "devDependencies": {
-    "chai": "~3.5.0",
+    "chai": "^4.1.0",
     "chai-leaflet": "0.0.12",
-    "eslint": "^2.10.2",
-    "eslint-plugin-html": "^1.4.0",
+    "eslint": "^4.3.0",
+    "eslint-plugin-html": "^3.1.1",
     "leaflet": "^1.0.3",
-    "mocha": "^2.4.5",
+    "mocha": "^3.4.2",
     "mocha-phantomjs-core": "^2.0.1",
-    "phantomjs-prebuilt": "^2.1.4",
-    "mversion": "^1.10.0"
+    "mversion": "^1.10.0",
+    "phantomjs-prebuilt": "^2.1.4"
   },
   "author": "Bjorn Sandvik",
   "contributors": [

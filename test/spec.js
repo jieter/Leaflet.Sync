@@ -68,7 +68,9 @@ var triggerDragAndDrop = function (selectorDrag, selectorDrop) {
     // fetch target elements
     var elemDrag = document.querySelector(selectorDrag);
     var elemDrop = document.querySelector(selectorDrop);
-    if (!elemDrag || !elemDrop) return false;
+    if (!elemDrag || !elemDrop) {
+        return false;
+    }
 
     // calculate positions
     var pos = elemDrag.getBoundingClientRect();

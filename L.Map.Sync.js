@@ -10,20 +10,20 @@
     };
 
     L.Sync = function () {};
-    // Helper function to compute the offset easily
-    // The arguments are relative positions with respect to reference and
-    // target maps of the point to sync.
-    // If you provide ratioRef=[0,1], ratioTgt=[1,0] will sync
-    // the bottom left corner of the reference map
-    // with the top right corner of the target map.
-    // The values can be less than 0 or greater than 1. It will sync
-    // points out of the map.
-    L.Sync.offsetHelper = function (ratioRef, ratioTgt) {
-        var or = L.Util.isArray(ratioRef) ? ratioRef : [0.5, 0.5]
-        var ot = L.Util.isArray(ratioTgt) ? ratioTgt : [0.5, 0.5]
-        return function (center, zoom, refMap, tgtMap) {
+    /*
+     * Helper function to compute the offset easily.
+     *
+     * The arguments are relative positions with respect to reference and target maps of
+     * the point to sync. If you provide ratioRef=[0, 1], ratioTarget=[1, 0] will sync the
+     * bottom left corner of the reference map with the top right corner of the target map.
+     * The values can be less than 0 or greater than 1. It will sync points out of the map.
+     */
+    L.Sync.offsetHelper = function (ratioRef, ratioTarget) {
+        var or = L.Util.isArray(ratioRef) ? ratioRef : [0.5, 0.5];
+        var ot = L.Util.isArray(ratioTarget) ? ratioTarget : [0.5, 0.5];
+        return function (center, zoom, refMap, targetMap) {
             var rs = refMap.getSize();
-            var ts = tgtMap.getSize();
+            var ts = targetMap.getSize();
             var pt = refMap.project(center, zoom)
                            .subtract([(0.5 - or[0]) * rs.x, (0.5 - or[1]) * rs.y])
                            .add([(0.5 - ot[0]) * ts.x, (0.5 - ot[1]) * ts.y]);
@@ -44,7 +44,7 @@
                     color: '#da291c',
                     fillColor: '#fff'
                 },
-                offsetFn: function (center, zoom, refMap, tgtMap) {
+                offsetFn: function (center, zoom, refMap, targetMap) {
                     // no transformation at all
                     return center;
                 }
@@ -121,10 +121,10 @@
         isSynced: function (otherMap) {
             var has = (this.hasOwnProperty('_syncMaps') && Object.keys(this._syncMaps).length > 0);
             if (has && otherMap) {
-                // Look for this specifyc map
+                // Look for this specific map
                 has = false;
                 this._syncMaps.forEach(function (synced) {
-                    if (otherMap == synced) has = true;
+                    if (otherMap == synced) { has = true; }
                 });
             }
             return has;
@@ -255,9 +255,9 @@
                     L.DomUtil.setPosition(toSync.dragging._draggable._element, self._newPos);
                     toSync.eachLayer(function (layer) {
                         if (layer._google !== undefined) {
-                            layer._google.setCenter(
-                                originalMap._syncOffsetFns[L.Util.stamp(toSync)](originalMap.getCenter(),
-                                             originalMap.getZoom(), originalMap, toSync));
+                            var offsetFn = originalMap._syncOffsetFns[L.Util.stamp(toSync)];
+                            var center = offsetFn(originalMap.getCenter(), originalMap.getZoom(), originalMap, toSync);
+                            layer._google.setCenter(center);
                         }
                     });
                     toSync.fire('move');
