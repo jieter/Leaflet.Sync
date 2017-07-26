@@ -62,7 +62,9 @@
                     this.getZoom(), NO_ANIMATION);
             }
             if (options.syncCursor) {
-                map.cursor = L.circleMarker([0, 0], options.syncCursorMarkerOptions).addTo(map);
+                if (typeof map.cursor === 'undefined') {
+                    map.cursor = L.circleMarker([0, 0], options.syncCursorMarkerOptions).addTo(map);
+                }
 
                 this._cursors.push(map.cursor);
 
@@ -83,19 +85,27 @@
         unsync: function (map) {
             var self = this;
 
+            if (this._cursors) {
+                this._cursors.forEach(function (cursor, indx, _cursors) {
+                    if (cursor === map.cursor) {
+                        _cursors.splice(indx, 1)
+                    }
+                });
+            }
+
+            // TODO: hide cursor in stead of moving to 0, 0
+            if (map.cursor) {
+                map.cursor.setLatLng([0, 0]);
+            }
+
             if (this._syncMaps) {
                 this._syncMaps.forEach(function (synced, id) {
                     if (map === synced) {
                         delete self._syncOffsetFns[L.Util.stamp(map)];
                         self._syncMaps.splice(id, 1);
-                        if (map.cursor) {
-                            map.cursor.removeFrom(map);
-                        }
                     }
                 });
             }
-            this.off('mousemove', this._cursorSyncMove, this);
-            this.off('mouseout', this._cursorSyncOut, this);
 
             if (!this._syncMaps || this._syncMaps.length == 0) {
                 // no more synced maps, so these events are not needed.
