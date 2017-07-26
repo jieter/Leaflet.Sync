@@ -88,7 +88,7 @@
             if (this._cursors) {
                 this._cursors.forEach(function (cursor, indx, _cursors) {
                     if (cursor === map.cursor) {
-                        _cursors.splice(indx, 1)
+                        _cursors.splice(indx, 1);
                     }
                 });
             }
