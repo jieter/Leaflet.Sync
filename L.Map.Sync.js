@@ -186,7 +186,8 @@
                     // around setView call
                     function sandwich (obj, fn) {
                         var viewpreresets = [];
-                        if (options && options.disableViewprereset) {
+                        var doit = options && options.disableViewprereset && obj && obj._events;
+                        if (doit) {
                             // The event viewpreresets does an invalidateAll,
                             // that reloads all the tiles.
                             // That causes an annoying flicker.
@@ -194,7 +195,7 @@
                             obj._events.viewprereset = [];
                         }
                         var ret = fn(obj);
-                        if (options && options.disableViewprereset) {
+                        if (doit) {
                             // restore viewpreresets event to its previous values
                             obj._events.viewprereset = viewpreresets;
                         }
