@@ -1,5 +1,8 @@
 # Leaflet.Sync changelog
 
+## 0.2.3 & 0.2.4 (2018-05-04)
+ - Experimented with different module loader, but reverted the changes, so 0.2.4 == 0.2.2.
+
 ## 0.2.2 (2017-11-30)
  - Fix crash when used with [Golden-Layout](http://golden-layout.com/) [#51](https://github.com/jieter/Leaflet.Sync/pull/51).
 
