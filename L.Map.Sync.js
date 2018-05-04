@@ -2,7 +2,20 @@
  * Extends L.Map to synchronize the interaction on one map to one or more other maps.
  */
 
-(function () {
+(function (factory, window) {
+    // define an AMD module that relies on 'leaflet'
+    if (typeof define === 'function' && define.amd) {
+        define(['leaflet'], factory);
+
+    // define a Common JS module that relies on 'leaflet'
+    } else if (typeof exports === 'object') {
+        module.exports = factory(require('leaflet'));
+    }
+
+    if (typeof window !== 'undefined' && window.L) {
+        factory(L);
+    }
+}(function (L) {
     var NO_ANIMATION = {
         animate: false,
         reset: true,
@@ -266,4 +279,4 @@
             };
         }
     });
-})();
+}, window));
