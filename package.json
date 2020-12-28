@@ -32,7 +32,7 @@
     "leaflet": "^1.5.1",
     "mocha": "^5.2.0",
     "mocha-chrome": "^1.1.0",
-    "mversion": "^1.12.0"
+    "mversion": "^2.0.0"
   },
   "author": "Bjorn Sandvik",
   "contributors": [
