@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Leaflet Sync Demo - with three maps listening</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet-src.js" crossorigin=""></script>
+
+    <style type="text/css">
+        html, body { width: 100%; height: 100%; margin: 0; }
+        #map, #container { width: 49.5%; height: 100%; }
+        #map { float: left; }
+        #container { float: right; }
+        #container .map { width: 100%; height: 50%; }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id="container">
+        <div id="mapA" class="map"></div>
+        <div id="mapB" class="map"></div>
+    </div>
+
+    <script src="../L.Map.Sync.js"></script>
+
+    <script type="text/javascript">
+        var center = [52.517, 13.388];
+
+        var options = {
+            attribution: '<a href="https://openstreetmap.org/copyright">&copy; OpenStreetmap and Contributors</a>',
+            subdomains: 'abc',
+            minZoom: 0,
+            maxZoom: 20
+        };
+
+        var osm = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', options);
+        var osmfr = L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', options);
+        var osmbw = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', options);
+
+
+        var map = L.map('map', {
+            layers: [osm],
+            center: center,
+            zoom: 7
+        });
+
+        var mapA = L.map('mapA', {
+            layers: [osmfr],
+            center: center,
+            zoom: 8,
+            zoomControl: false
+        });
+        var mapB = L.map('mapB', {
+            layers: [osmbw],
+            center: center,
+            zoom: 6,
+            zoomControl: false
+        });
+
+        function maker (z) {
+            return {
+                offsetFn: function (center, zoom, rm, tm) {
+                    return {center: center, zoom: zoom + z}; 
+                }
+            };
+        }
+
+        map.sync(mapA, maker(+1));
+        map.sync(mapB, maker(-1));
+
+        var doAll = false;
+        var doA = false;
+        var doB = false;
+
+        var p = location.search;
+        if (p != '') {
+            var params = p.substring(1).split('&');
+            for (var i = 0; i < params.length; i++) {
+                var param = params[i].split('=');
+                switch (param[0]) {
+                case 'all':
+                    doAll = parseInt(param[1]);
+                    break;
+                case 'a':
+                    doA = parseInt(param[1]);
+                    break;
+                case 'b':
+                    doB = parseInt(param[1]);
+                    break;
+                }
+            }
+        }
+
+        // If you want interaction with mapA|B to be synchronized on map,
+        // add other links as well.
+        // or add ?all=1 to the url.
+        if (doAll || doA) {
+            mapA.sync(map, maker(-1));
+            mapA.sync(mapB, maker(-2));
+        }
+
+        if (doAll || doB) {
+            mapB.sync(map, maker(+1));
+            mapB.sync(mapA, maker(+2));
+        }
+
+    </script>
+</body>
+</html>
