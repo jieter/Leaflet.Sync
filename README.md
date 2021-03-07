@@ -34,7 +34,7 @@ mapC.sync(mapB);
 ```
 ## Offset
 You can synchronize not only the centers, but other points, using the option `offsetFn`.
-The parameters send to the function are `(center, zoom, referenceMap, targetMap)`, and it must return the equivalent center to produce your offset. That means, the center to pass to setView.
+The parameters send to the function are `(center, zoom, referenceMap, targetMap)`, and it must return the equivalent center to produce your offset. That means, the center to pass to setView. In case you want to change the zoom level, you can return either and object `{center: computed_center, zoom: computed_zoom}`.
 
 In most cases, you can use the factory `L.Sync.offsetHelper`, that accepts two arrays of two elements each `(ratioRef, ratioTgt)`. The meaning of this array is the relative position -relative to the top left corner and the whole size- in the map container of the point to synchronize. The first value in the array is for the x axis, where 0 is the left side and 1 the right side. The second value in the array is for the y axis, where 0 is the top side, and 1 the bottom side. So `[0, 0]` is the top left corner, `[0, 1]` is the bottom left corner, `[0.5, 1]` is the middle of the bottom side, `[0.5, 0.5]` is the center of the container, `[0.75, 0.25]` is the center of the top right quadrant, and `[2, 0]` is a point out of the container, one 'width' far to the right, in the top line.
 ```
@@ -85,6 +85,14 @@ function offsetGlobal (center, zoom, refMap, tgtMap) {
 
 ![offset animation](offset_animation.gif)
 
+To change the zoom level, for instance to have a global view centered in the same point, you can do something like this:
+```JavaScript
+mapA.sync(mapB, {offsetFn: function (center, zoom, refMap, tgtMap) {
+    return {center: center, zoom: zoom - 1};
+    }
+});
+```
+
 API
 ---
 
@@ -96,7 +104,7 @@ Optional `options`:
 {
     noInitialSync: true, // disables initial synchronization of the maps.
     syncCursor: true, // add a circle marker on the synced map
-    offsetFn: function (center, zoom, refMap, tgtMap) { return center; } // function to compute an offset for the center
+    offsetFn: function (center, zoom, refMap, tgtMap) { return center; } // function to compute an offset for the center, or both center and zoom
 }
 ```
 
