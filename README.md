@@ -87,8 +87,9 @@ function offsetGlobal (center, zoom, refMap, tgtMap) {
 
 To change the zoom level, for instance to have a global view centered in the same point, you can do something like this:
 ```JavaScript
-mapA.sync(mapB, {offsetFn: function (center, zoom, refMap, tgtMap) {
-    return {center: center, zoom: zoom - 1};
+mapA.sync(mapB, {
+    offsetFn: function (center, zoom, refMap, targetMap) {
+        return {center: center, zoom: zoom - 1};
     }
 });
 ```
