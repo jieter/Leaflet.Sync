@@ -50,6 +50,16 @@
                 }
             }, options);
 
+            var offsetOriginalFn = options.offsetFn;
+            function wrapFn (center, zoom, refMap, targetMap) {
+                var result = offsetOriginalFn(center, zoom, refMap, targetMap);
+                if ('center' in result) {
+                    return result;
+                }
+                return {center: result, zoom: zoom};
+            }
+            options.offsetFn = wrapFn;
+
             // prevent double-syncing the map:
             if (this._syncMaps.indexOf(map) === -1) {
                 this._syncMaps.push(map);
@@ -57,9 +67,8 @@
             }
 
             if (!options.noInitialSync) {
-                map.setView(
-                    options.offsetFn(this.getCenter(), this.getZoom(), this, map),
-                    this.getZoom(), NO_ANIMATION);
+                var view = options.offsetFn(this.getCenter(), this.getZoom(), this, map);
+                map.setView(view.center, view.zoom, NO_ANIMATION);
             }
             if (options.syncCursor) {
                 if (typeof map.cursor === 'undefined') {
@@ -168,6 +177,16 @@
             this._syncDragend = true;
         },
 
+        _zoomFactorTo: function (syncedMap) {
+            var zoom = this.getZoom();
+            var toSyncZoom = syncedMap.getZoom();
+            if (zoom == toSyncZoom) {
+                return 1;
+            }
+            var zoomDiff = zoom - toSyncZoom;
+            var zoomFactor = Math.pow((zoomDiff > 0) ? .5 : 2, Math.abs(zoomDiff));
+            return zoomFactor;
+        },
 
         // overload methods on originalMap to replay interactions on _syncMaps;
         _initSync: function () {
@@ -211,9 +230,8 @@
                     if (!sync) {
                         originalMap._syncMaps.forEach(function (toSync) {
                             sandwich(toSync, function (obj) {
-                                return toSync.setView(
-                                    originalMap._syncOffsetFns[L.Util.stamp(toSync)](center, zoom, originalMap, toSync),
-                                    zoom, options, true);
+                                var centerZoom = originalMap._syncOffsetFns[L.Util.stamp(toSync)](center, zoom, originalMap, toSync);
+                                return toSync.setView(centerZoom.center, centerZoom.zoom, options, true);
                             });
                         });
                     }
@@ -224,11 +242,17 @@
                 panBy: function (offset, options, sync) {
                     if (!sync) {
                         originalMap._syncMaps.forEach(function (toSync) {
-                            toSync.panBy(offset, options, true);
+                            var zoomFactor = originalMap._zoomFactorTo(toSync);
+                            var newOffset = Array.isArray(offset) ?
+                                offset.map(function (o) { return o * zoomFactor; }) :
+                                offset.multiplyBy(zoomFactor);
+
+                            toSync.panBy(newOffset, options, true);
                         });
                     }
                     return L.Map.prototype.panBy.call(this, offset, options);
                 },
+
 
                 _onResize: function (event, sync) {
                     if (!sync) {
@@ -253,12 +277,15 @@
                 L.Draggable.prototype._updatePosition.call(this);
                 var self = this;
                 originalMap._syncMaps.forEach(function (toSync) {
-                    L.DomUtil.setPosition(toSync.dragging._draggable._element, self._newPos);
+                    var zoomFactor = originalMap._zoomFactorTo(toSync);
+                    var newPos = self._newPos.multiplyBy(zoomFactor);
+                    L.DomUtil.setPosition(toSync.dragging._draggable._element, newPos);
                     toSync.eachLayer(function (layer) {
                         if (layer._google !== undefined) {
                             var offsetFn = originalMap._syncOffsetFns[L.Util.stamp(toSync)];
-                            var center = offsetFn(originalMap.getCenter(), originalMap.getZoom(), originalMap, toSync);
-                            layer._google.setCenter(center);
+                            var centerZoom = offsetFn(originalMap.getCenter(), originalMap.getZoom(), originalMap, toSync);
+                            layer._google.setCenter(centerZoom.center);
+                            layer._google.setZoom(centerZoom.zoom);
                         }
                     });
                     toSync.fire('move');

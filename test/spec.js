@@ -605,5 +605,113 @@ describe('L.Sync', function () {
                 c.should.have.view([5, 10.39453], 7);
             });
         });
+        describe('zoom change', function () {
+
+            function makeFn (z) {
+                return function (center, zoom, rm, tm) {
+                    return {center: center, zoom: zoom + z};
+                };
+            }
+
+            describe('A -> B, A -> C', function () {
+                /* parameter greater than 1 */
+                beforeEach(function () {
+                    a = makeMap(a, 'mapA');
+                    b = makeMap(b, 'mapB');
+                    c = makeMap(c, 'mapC');
+                    a.sync(b, {offsetFn: makeFn(1)});
+                    a.sync(c, {offsetFn: makeFn(-1)});
+                });
+
+                it('syncs', function () {
+                    a.setView([5, 6], 7, NO_ANIMATE);
+                    a.should.have.view([5, 6], 7);
+                    b.should.have.view([5, 6], 8);
+                    c.should.have.view([5, 6], 6);
+                });
+            });
+            describe('A <-> B, A <-> C', function () {
+                beforeEach(function () {
+                    a = makeMap(a, 'mapA');
+                    b = makeMap(b, 'mapB');
+                    c = makeMap(c, 'mapC');
+                    a.sync(b, {offsetFn: makeFn(1)});
+                    b.sync(a, {offsetFn: makeFn(-1)});
+                    a.sync(c, {offsetFn: makeFn(2)});
+                    c.sync(a, {offsetFn: makeFn(-2)});
+                });
+
+                /**
+                 * Check if isSynced works
+                 */
+                it('isSynced', function () {
+                    a.isSynced().should.be.true;
+                    b.isSynced().should.be.true;
+                    c.isSynced().should.be.true;
+
+                    a._syncMaps.should.have.length(2);
+                    Object.keys(a._syncOffsetFns).should.have.length(2);
+                    b._syncMaps.should.have.length(1);
+                    Object.keys(b._syncOffsetFns).should.have.length(1);
+                    c._syncMaps.should.have.length(1);
+                    Object.keys(c._syncOffsetFns).should.have.length(1);
+                });
+
+                it('syncs', function () {
+                    a.setView([5, 6], 7, NO_ANIMATE);
+                    a.should.have.view([5, 6], 7);
+                    b.should.have.view([5, 6], 8);
+                    c.should.have.view([5, 6], 9);
+
+                    b.setView([3, 4], 5, NO_ANIMATE);
+                    b.should.have.view([3, 4], 5);
+                    a.should.have.view([3, 4], 4);
+                    c.should.have.view([3, 4], 6);
+                });
+            });
+            describe('A <-> B, A <-> C, B<->C', function () {
+                beforeEach(function () {
+                    a = makeMap(a, 'mapA');
+                    b = makeMap(b, 'mapB');
+                    c = makeMap(c, 'mapC');
+                    // zoom changes must be consistent. Otherwise it may get into an infinte loop
+                    // or stack overflow
+                    a.sync(b, {offsetFn: makeFn(1)});
+                    b.sync(a, {offsetFn: makeFn(-1)});
+                    a.sync(c, {offsetFn: makeFn(2)});
+                    c.sync(a, {offsetFn: makeFn(-2)});
+                    b.sync(c, {offsetFn: makeFn(1)});
+                    c.sync(b, {offsetFn: makeFn(-1)});
+                });
+
+                /**
+                 * Check if isSynced works
+                 */
+                it('isSynced', function () {
+                    a.isSynced().should.be.true;
+                    b.isSynced().should.be.true;
+                    c.isSynced().should.be.true;
+
+                    a._syncMaps.should.have.length(2);
+                    Object.keys(a._syncOffsetFns).should.have.length(2);
+                    b._syncMaps.should.have.length(2);
+                    Object.keys(b._syncOffsetFns).should.have.length(2);
+                    c._syncMaps.should.have.length(2);
+                    Object.keys(c._syncOffsetFns).should.have.length(2);
+                });
+
+                it('syncs', function () {
+                    a.setView([5, 6], 7, NO_ANIMATE);
+                    a.should.have.view([5, 6], 7);
+                    b.should.have.view([5, 6], 8);
+                    c.should.have.view([5, 6], 9);
+
+                    b.setView([3, 4], 5, NO_ANIMATE);
+                    b.should.have.view([3, 4], 5);
+                    a.should.have.view([3, 4], 4);
+                    c.should.have.view([3, 4], 6);
+                });
+            });
+        });
     });
 });
