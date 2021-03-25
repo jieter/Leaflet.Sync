@@ -67,8 +67,8 @@
             }
 
             if (!options.noInitialSync) {
-                var centerZoom = options.offsetFn(this.getCenter(), this.getZoom(), this, map);
-                map.setView(centerZoom.center, centerZoom.zoom, NO_ANIMATION);
+                var view = options.offsetFn(this.getCenter(), this.getZoom(), this, map);
+                map.setView(view.center, view.zoom, NO_ANIMATION);
             }
             if (options.syncCursor) {
                 if (typeof map.cursor === 'undefined') {
