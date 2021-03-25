@@ -243,9 +243,10 @@
                     if (!sync) {
                         originalMap._syncMaps.forEach(function (toSync) {
                             var zoomFactor = originalMap._zoomFactorTo(toSync);
-                            var newOffset = !Array.isArray(offset) ?
-                                offset.multiplyBy(zoomFactor) :
-                                offset.map(function (o) {return o*zoomFactor;});
+                            var newOffset = Array.isArray(offset) ?
+                                offset.map(function (o) { return o * zoomFactor; }) :
+                                offset.multiplyBy(zoomFactor);
+
                             toSync.panBy(newOffset, options, true);
                         });
                     }
