@@ -105,7 +105,7 @@ Optional `options`:
 {
     noInitialSync: true, // disables initial synchronization of the maps.
     syncCursor: true, // add a circle marker on the synced map
-    offsetFn: function (center, zoom, refMap, tgtMap) { return center; } // function to compute an offset for the center, or both center and zoom
+    offsetFn: function (center, zoom, refMap, targetMap) { return center; } // function to compute an offset for the center, or both center and zoom
 }
 ```
 
