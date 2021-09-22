@@ -29,7 +29,7 @@
     "chai-leaflet": "0.0.13",
     "eslint": "^6.0.0",
     "eslint-plugin-html": "^6.0.0",
-    "leaflet": "^1.5.1",
+    "leaflet": "^1.7.1",
     "mocha": "^5.2.0",
     "mocha-chrome": "^1.1.0",
     "mversion": "^2.0.0"
