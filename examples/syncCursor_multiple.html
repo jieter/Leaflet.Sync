@@ -29,17 +29,17 @@
 
         var stamenOptions = {
             attribution:
-                'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
-                '<a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; ' +
+                'Map tiles by <a href="https://stamen.com">Stamen Design</a>, ' +
+                '<a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; ' +
                 'Map data OpenStreetmap',
             subdomains: 'abcd',
             minZoom: 0,
             maxZoom: 20
         };
 
-        var toner = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', stamenOptions);
-        var tonerLite = L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', stamenOptions);
-        var watercolor = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', stamenOptions);
+        var toner = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png', stamenOptions);
+        var tonerLite = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', stamenOptions);
+        var watercolor = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg', stamenOptions);
 
         var map = L.map('map', {
             layers: [toner],
