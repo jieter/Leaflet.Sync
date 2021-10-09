@@ -1,7 +1,7 @@
 Leaflet.Sync
 ============
 
-Synchronized view of two maps. Tested with Leaflet 1.0.3, 1.1.0, 1.2.0 and 1.5.1.
+Synchronized view of two maps. Tested with Leaflet 1.0.3, 1.1.0, 1.2.0, 1.5.1, and 1.7.1.
 
 [More information in original blog post by @turban](http://blog.thematicmapping.org/2013/06/creating-synchronized-view-of-two-maps.html)
 
