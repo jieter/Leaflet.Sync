@@ -63,13 +63,16 @@
             }
             if (options.syncCursor) {
                 if (typeof map.cursor === 'undefined') {
-                    map.cursor = L.circleMarker([0, 0], options.syncCursorMarkerOptions).addTo(map);
+                    map.cursor = L.circleMarker([0, 0], options.syncCursorMarkerOptions)
+                                    .setStyle({'fill': false, 'stroke': false})
+                                    .addTo(map);
                 }
 
                 this._cursors.push(map.cursor);
 
                 this.on('mousemove', this._cursorSyncMove, this);
                 this.on('mouseout', this._cursorSyncOut, this);
+                this.on('mouseover', this._cursorSyncOver, this);
             }
 
             // on these events, we should reset the view on every synced map
@@ -93,9 +96,8 @@
                 });
             }
 
-            // TODO: hide cursor in stead of moving to 0, 0
             if (map.cursor) {
-                map.cursor.setLatLng([0, 0]);
+                map.cursor.setStyle({fill: false, stroke: false});
             }
 
             if (this._syncMaps) {
@@ -140,8 +142,13 @@
 
         _cursorSyncOut: function (e) {
             this._cursors.forEach(function (cursor) {
-                // TODO: hide cursor in stead of moving to 0, 0
-                cursor.setLatLng([0, 0]);
+                cursor.setStyle({fill: false, stroke: false});     
+            });
+        },
+
+        _cursorSyncOver: function (e) {
+            this._cursors.forEach(function (cursor) {
+                cursor.setStyle({fill: true, stroke: true});    
             });
         },
 
